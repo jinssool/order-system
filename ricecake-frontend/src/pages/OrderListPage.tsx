@@ -29,7 +29,7 @@ const OrderListPage = () => {
   }, [orders, selectedDate]);
 
   const sortedOrders = useMemo(() => {
-    const sorted = [...ordersForSelectedDate]; 
+    const sorted = [...ordersForSelectedDate];
     switch (sortType) {
       case 'cake': return sorted.sort((a, b) => a.riceCakeType.localeCompare(b.riceCakeType));
       case 'status': return sorted.sort((a, b) => Number(a.isDelivered) - Number(b.isDelivered));
@@ -46,12 +46,11 @@ const OrderListPage = () => {
   };
 
   return (
-    <div className="page-container final-layout">
-      {/* --- 1행: 캘린더와 통계 --- */}
+    <div className="page-container">
       <div className="top-section">
         <div className="calendar-area">
-          <div className="page-header">
-            <h2>주문 달력</h2>
+          <div className="header">
+            <h2>주문 현황 대시보드</h2>
             <Link to="/orders/new-kiosk" className="add-button">신규 주문 추가</Link>
           </div>
           <div className="calendar-container">
@@ -60,7 +59,7 @@ const OrderListPage = () => {
               value={selectedDate}
               formatDay={(_, date) => date.getDate().toString()}
               tileContent={renderTileContent}
-              locale="ko-KR" // 캘린더 한글화
+              locale="ko-KR"
             />
           </div>
         </div>
@@ -70,7 +69,7 @@ const OrderListPage = () => {
       </div>
 
       <div className="order-list-area">
-        <div className="order-list-header">
+        <div className="header">
           <h3>{selectedDate.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })} 주문 목록</h3>
           <div className="sort-options">
             <span>정렬:</span>

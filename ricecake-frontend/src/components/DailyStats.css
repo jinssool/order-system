@@ -1,38 +1,32 @@
-/* src/components/DailyStats.css */
-.stats-container-simple {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e9ecef;
+.stats-container {
     padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
   }
   
-  .clock-simple {
+  .clock {
     text-align: center;
     font-size: 2.8em;
     font-weight: bold;
   }
   
-  .stats-summary-simple {
+  .stats-summary {
     text-align: center;
     font-size: 1.2em;
     font-weight: bold;
     color: #495057;
-    padding-bottom: 15px;
+    padding: 15px 0;
     border-bottom: 1px solid #e9ecef;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin: 15px 0;
   }
   
-  .stats-row-simple {
+  .stats-row {
     display: flex;
     gap: 15px;
-    flex-grow: 1; /* 남는 공간을 차지하여 수직 정렬 */
   }
   
-  .stat-item-simple {
+  .stat-item {
     background-color: #f8f9fa;
     border-radius: 12px;
     padding: 15px;
@@ -43,14 +37,75 @@
     justify-content: center;
   }
   
-  .stat-item-simple .label {
+  .stat-item .label {
     font-size: 1em;
     color: #868e96;
     margin-bottom: 8px;
   }
-  .stat-item-simple .value {
+  
+  .stat-item .value {
     font-size: 2em;
     font-weight: bold;
   }
-  .stat-item-simple .value.warning { color: #dc3545; }
-  .stat-item-simple .value.info { color: #ffc107; }
+  
+  .stat-item .value.warning {
+    color: #dc3545;
+  }
+  
+  .stat-item .value.info {
+    color: #ffc107;
+  }
+  
+  /* 시간대별 분포 영역 */
+  .timeslot-container {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    overflow: hidden;
+  }
+  
+  .container-label {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #495057;
+    font-size: 1em;
+  }
+  
+  /* 3등분 레이아웃 */
+  .timeslot-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  /* 개별 시간대 카드 */
+  .timeslot-item {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 0;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* 시간대 텍스트 */
+  .timeslot-item span {
+    font-size: 0.85em;
+    color: #868e96;
+  }
+  
+  /* 주문 수 */
+  .timeslot-item strong {
+    margin-top: 6px;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #212529;
+  }
+  
