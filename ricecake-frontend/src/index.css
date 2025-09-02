@@ -1,0 +1,21 @@
+/* src/index.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.5em; /* 글씨 크기를 전반적으로 키웁니다. */
+  }
+  
+  button {
+    font-size: 1em; /* 버튼 글씨 크기도 키웁니다. */
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }

@@ -1,0 +1,17 @@
+/* src/pages/ListPage.css */
+.list-container { display: flex; flex-direction: column; gap: 16px; }
+.list-item {
+  background: white; padding: 20px; border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex;
+  justify-content: space-between; align-items: center;
+}
+.item-info h3 { margin: 0 0 8px; font-size: 1.4em; }
+.item-info p { margin: 0; color: #555; }
+.item-info .memo { font-style: italic; color: #888; font-size: 0.9em; margin-top: 8px; }
+.item-actions { display: flex; gap: 10px; }
+.item-actions .edit-button, .item-actions .delete-button {
+  padding: 8px 16px; font-weight: bold; border-radius: 8px; border: none;
+  cursor: pointer; text-decoration: none; color: white;
+}
+.item-actions .edit-button { background-color: #ffc107; color: #212529; }
+.item-actions .delete-button { background-color: #dc3545; }

@@ -1,0 +1,56 @@
+/* src/components/DailyStats.css */
+.stats-container-simple {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .clock-simple {
+    text-align: center;
+    font-size: 2.8em;
+    font-weight: bold;
+  }
+  
+  .stats-summary-simple {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #495057;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .stats-row-simple {
+    display: flex;
+    gap: 15px;
+    flex-grow: 1; /* 남는 공간을 차지하여 수직 정렬 */
+  }
+  
+  .stat-item-simple {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .stat-item-simple .label {
+    font-size: 1em;
+    color: #868e96;
+    margin-bottom: 8px;
+  }
+  .stat-item-simple .value {
+    font-size: 2em;
+    font-weight: bold;
+  }
+  .stat-item-simple .value.warning { color: #dc3545; }
+  .stat-item-simple .value.info { color: #ffc107; }
