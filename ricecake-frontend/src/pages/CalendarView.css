@@ -1,55 +1,66 @@
 /* src/pages/CalendarView.css */
 .calendar-container {
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-  }
-  
-  /* react-calendar 기본 스타일 오버라이드 */
-  .react-calendar {
-    width: 100%;
-    border: none;
-  }
-  
-  .react-calendar__tile {
-    height: 80px; /* 날짜 칸 높이 키우기 */
-    font-size: 1.1em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  
-  .react-calendar__tile--now {
-    background-color: #e6f7ff; /* 오늘 날짜 배경색 */
-  }
-  
-  .react-calendar__tile--active,
-  .react-calendar__tile:enabled:hover,
-  .react-calendar__tile:enabled:focus {
-    background-color: #007bff; /* 선택된 날짜 배경색 */
-    color: white;
-  }
-  
-  /* 주문 표시 점 스타일 */
-  .order-dot {
-    height: 8px;
-    width: 8px;
-    background-color: #dc3545; /* 빨간색 점 */
-    border-radius: 50%;
-    margin-top: 8px;
-  }
-  
-  /* 선택된 날짜의 점은 흰색으로 */
-  .react-calendar__tile--active .order-dot {
-    background-color: white;
-  }
-  
-  .daily-order-list h3 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eee;
-  }
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.react-calendar {
+  width: 100%;
+  border: none;
+}
+
+.react-calendar__tile {
+  height: 60px;
+  font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 5px;
+}
+
+.react-calendar__tile--now {
+  background-color: #e6f7ff;
+}
+
+.react-calendar__tile--active,
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #007bff;
+  color: white;
+}
+
+/* --- 이 부분의 스타일을 수정합니다 --- */
+.order-dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  margin-top: 8px;
+}
+/* 주문 1건: 옅은 초록색 */
+.order-dot.low {
+  background-color: #20c997;
+}
+/* 주문 2-4건: 옅은 주황색 */
+.order-dot.medium {
+  background-color: #aea802;
+}
+/* 주문 5건 이상: 짙은 빨간색 */
+.order-dot.high {
+  background-color: #fa5252;
+}
+/* ---------------------------------- */
+
+
+.react-calendar__tile--active .order-dot {
+  background-color: white;
+}
+
+.react-calendar__month-view__weekdays abbr {
+  font-size: 1.1em;
+  font-weight: 600;
+  text-decoration: none;
+  color: #333;
+}

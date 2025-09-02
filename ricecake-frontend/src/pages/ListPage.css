@@ -1,17 +1,31 @@
 /* src/pages/ListPage.css */
-.list-container { display: flex; flex-direction: column; gap: 16px; }
-.list-item {
-  background: white; padding: 20px; border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex;
-  justify-content: space-between; align-items: center;
-}
+.page-container.with-fixed-header { display: flex; flex-direction: column; height: calc(100vh - 70px); }
+.page-header.fixed { background: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e9ecef; flex-shrink: 0; }
+.header-left { display: flex; align-items: center; gap: 20px; }
+.header-left h2 { margin: 0; }
+.search-input { padding: 8px 12px; font-size: 1em; border-radius: 8px; border: 1px solid #ced4da; width: 250px; }
+.consonant-filter { display: flex; justify-content: center; gap: 8px; padding: 16px 24px; background-color: #f8f9fa; flex-shrink: 0; border-bottom: 1px solid #e9ecef; }
+.consonant-filter button { font-size: 1em; font-weight: bold; border: 1px solid #dee2e6; background: white; color: #868e96; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: all 0.2s; }
+.consonant-filter button:hover { background: #e9ecef; }
+.consonant-filter button.active { background: #007bff; color: white; border-color: #007bff; }
+.list-container.scrollable { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.list-item { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .item-info h3 { margin: 0 0 8px; font-size: 1.4em; }
 .item-info p { margin: 0; color: #555; }
 .item-info .memo { font-style: italic; color: #888; font-size: 0.9em; margin-top: 8px; }
 .item-actions { display: flex; gap: 10px; }
+
+/* 수정/삭제 버튼 스타일 변경 */
 .item-actions .edit-button, .item-actions .delete-button {
-  padding: 8px 16px; font-weight: bold; border-radius: 8px; border: none;
-  cursor: pointer; text-decoration: none; color: white;
+  padding: 8px 16px; font-weight: bold; border-radius: 8px;
+  cursor: pointer; text-decoration: none; white-space: nowrap; transition: all 0.2s;
 }
-.item-actions .edit-button { background-color: #ffc107; color: #212529; }
-.item-actions .delete-button { background-color: #dc3545; }
+.item-actions .edit-button {
+  background-color: #f1f3f5; color: #495057; border: 1px solid #dee2e6;
+}
+.item-actions .edit-button:hover { background-color: #e9ecef; }
+
+.item-actions .delete-button {
+  background-color: transparent; color: #fa5252; border: 1px solid #fa5252;
+}
+.item-actions .delete-button:hover { background-color: #fff5f5; }

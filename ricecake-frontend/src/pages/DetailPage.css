@@ -1,0 +1,31 @@
+/* src/pages/DetailPage.css */
+.detail-page { padding: 24px; }
+.detail-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #e9ecef; }
+.detail-page-header h1 { margin: 0; }
+.back-button { background: none; border: none; font-size: 1.1em; color: #007bff; cursor: pointer; }
+.detail-page-grid { display: grid; grid-template-columns: 350px 1fr; gap: 24px; }
+.info-card { background: white; border-radius: 12px; border: 1px solid #e9ecef; padding: 24px; margin-bottom: 16px; }
+.info-card h3 { margin: 0 0 16px; font-size: 1.8em; }
+.info-card p { margin: 8px 0; font-size: 1.2em; }
+.action-buttons { display: flex; gap: 16px; }
+
+/* 수정/삭제 버튼 스타일 변경 */
+.edit-button, .delete-button {
+  flex: 1; padding: 12px; font-size: 1.1em; font-weight: bold;
+  border-radius: 8px; cursor: pointer; text-decoration: none; text-align: center;
+  transition: all 0.2s;
+}
+.edit-button {
+  background-color: #f1f3f5; color: #495057; border: 1px solid #dee2e6;
+}
+.edit-button:hover { background-color: #e9ecef; }
+
+.delete-button {
+  background-color: transparent; color: #fa5252; border: 1px solid #fa5252;
+}
+.delete-button:hover { background-color: #fff5f5; }
+
+.related-list-area { background: white; border-radius: 12px; border: 1px solid #e9ecef; padding: 24px; display: flex; flex-direction: column; }
+.related-list-area h3 { margin: 0 0 16px; font-size: 1.5em; border-bottom: 1px solid #f1f3f5; padding-bottom: 16px; }
+.related-list { flex-grow: 1; overflow-y: auto; }
+.empty-message { text-align: center; color: #868e96; padding-top: 40px; }

@@ -24,6 +24,10 @@ import NewOrderKioskPage from './pages/NewOrderKioskPage';
 import RiceCakeListPage from './pages/RiceCakeListPage'; // 새로 추가
 import RiceCakeCreatePage from './pages/RiceCakeCreatePage'; // 새로 추가
 import RiceCakeEditPage from './pages/RiceCakeEditPage'; // 새로 추가
+import CustomerDetailPage from './pages/CustomerDetailPage'; // 새로 추가
+import RiceCakeDetailPage from './pages/RiceCakeDetailPage'; // 새로 추가
+import StatisticsPage from './pages/StatisticsPage'; // 새로 추가
+
 
 
 
@@ -43,7 +47,6 @@ const router = createBrowserRouter([
       { path: "customers", element: <CustomerListPage /> },
       { path: "customers/new", element: <CustomerCreatePage /> },
       { path: "customers/:customerId/edit", element: <CustomerEditPage /> },
-      { path: "customers/:customerId/edit", element: <CustomerEditPage /> },
 
       // --- 키오스크 주문 경로 추가 ---
       { path: "orders/new-kiosk", element: <NewOrderKioskPage /> },
@@ -51,6 +54,12 @@ const router = createBrowserRouter([
       { path: "rice-cakes", element: <RiceCakeListPage /> },
       { path: "rice-cakes/new", element: <RiceCakeCreatePage /> },
       { path: "rice-cakes/:cakeId/edit", element: <RiceCakeEditPage /> },
+
+      { path: "stats", element: <StatisticsPage /> },
+      { path: "customers/:customerId", element: <CustomerDetailPage /> }, // 고객 상세 페이지 라우트
+      { path: "rice-cakes/:cakeId", element: <RiceCakeDetailPage /> }, // 떡 상세 페이지 라우트
+      
+
     ]
   }
 ]);

@@ -21,16 +21,16 @@ const OrderCard = ({ order }: OrderCardProps) => {
       <div className="card-right">
         <div className="status-tags-inline">
             {order.isPaid 
-                ? <StatusTag label="결제완료" type="success" /> 
-                : <StatusTag label="미결제" type="warning" />
+                ? <StatusTag label="결제완료" type="paid" /> 
+                : <StatusTag label="미결제" type="unpaid" />
             }
             {order.isDelivered 
-                ? <StatusTag label="수령완료" type="success" /> 
-                : <StatusTag label="미수령" type="info" />
+                ? <StatusTag label="수령완료" type="delivered" /> 
+                : <StatusTag label="미수령" type="undelivered" />
             }
             {order.hasRice
-                ? <StatusTag label="쌀있음" type="success" />
-                : <StatusTag label="쌀없음" type="info" />
+                ? <StatusTag label="쌀있음" type="rice-ok" />
+                : <StatusTag label="쌀없음" type="rice-no" />
             }
         </div>
       </div>

@@ -19,6 +19,8 @@ function App() {
           <NavLink to="/" end>주문</NavLink>
           <NavLink to="/customers">고객</NavLink>
           <NavLink to="/rice-cakes">떡 관리</NavLink>
+          <NavLink to="/stats">통계</NavLink> 
+
         </nav>
       )}
     </div>

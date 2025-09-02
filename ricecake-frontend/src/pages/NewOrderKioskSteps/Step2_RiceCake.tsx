@@ -1,6 +1,7 @@
 // src/pages/NewOrderKioskSteps/Step2_RiceCake.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRiceCakes } from '../../contexts/RiceCakesContext';
+import { getFirstConsonant } from '../../utils/hangulUtils';
 import type { Order, Unit, RiceCakeType } from '../../types';
 
 interface StepProps {
@@ -10,19 +11,23 @@ interface StepProps {
   goToPrevStep: () => void;
 }
 
+const CONSONANTS = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
 const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep }: StepProps) => {
   const { riceCakes } = useRiceCakes();
   const [selectedRiceCake, setSelectedRiceCake] = useState<RiceCakeType | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [unit, setUnit] = useState<Unit>('kg');
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuantity = Number(e.target.value);
-    if (newQuantity >= 1) { // 1 이상일 때만 상태 업데이트
-        setQuantity(newQuantity);
-    }
- };
+  const [selectedConsonant, setSelectedConsonant] = useState<string | null>(null);
 
-  // 이전에 선택한 데이터가 있으면 상태를 복원
+  const filteredRiceCakes = useMemo(() => {
+    let filtered = [...riceCakes].sort((a,b) => a.name.localeCompare(b.name));
+    if (selectedConsonant) {
+      filtered = filtered.filter(c => getFirstConsonant(c.name[0]) === selectedConsonant);
+    }
+    return filtered;
+  }, [riceCakes, selectedConsonant]);
+
   useEffect(() => {
      if(orderData.riceCakeType) {
          const cake = riceCakes.find(c => c.name === orderData.riceCakeType);
@@ -36,7 +41,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
 
   const handleSelectRiceCake = (cake: RiceCakeType) => {
     setSelectedRiceCake(cake);
-    setUnit(cake.unit); // 선택한 떡의 기본 단위로 자동 설정
+    setUnit(cake.unit);
   };
 
   const handleNext = () => {
@@ -52,11 +57,34 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
     goToNextStep();
   };
 
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = Number(e.target.value);
+    if (newQuantity >= 1) {
+        setQuantity(newQuantity);
+    }
+  };
+
+  // --- 초성 버튼 클릭 시 실행될 새로운 함수 ---
+  const handleConsonantClick = (consonant: string | null) => {
+    setSelectedConsonant(consonant); // 선택된 초성 변경
+    setSelectedRiceCake(null); // 현재 선택된 떡 초기화
+  };
+  // -----------------------------------------
+
   return (
     <div className="kiosk-step">
       <h2>2. 떡 종류와 수량을 선택하세요.</h2>
+      
+      <div className="consonant-filter-kiosk">
+        {/* 새로운 핸들러 함수를 연결합니다. */}
+        <button className={!selectedConsonant ? 'active' : ''} onClick={() => handleConsonantClick(null)}>전체</button>
+        {CONSONANTS.map(c => (
+          <button key={c} className={selectedConsonant === c ? 'active' : ''} onClick={() => handleConsonantClick(c)}>{c}</button>
+        ))}
+      </div>
+
       <div className="kiosk-selection-grid">
-        {riceCakes.map(cake => (
+        {filteredRiceCakes.map(cake => (
           <button
             key={cake.id}
             onClick={() => handleSelectRiceCake(cake)}
@@ -72,14 +100,8 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
         <div className="kiosk-input-section">
           <div className="form-group">
             <label htmlFor="quantity">수량</label>
-            <input 
-                id="quantity" 
-                type="number" 
-                value={quantity} 
-                onChange={handleQuantityChange} // 수정된 핸들러 연결
-                min="1" // HTML 기본 유효성 검사 추가
-            />   
-            </div>
+            <input id="quantity" type="number" value={quantity} onChange={handleQuantityChange} min="1"/>
+          </div>
           <div className="form-group">
             <label htmlFor="unit">단위</label>
             <select id="unit" value={unit} onChange={e => setUnit(e.target.value as Unit)}>

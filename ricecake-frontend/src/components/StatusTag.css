@@ -1,25 +1,21 @@
 /* src/components/StatusTag.css */
-
 .status-tag {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.8em; /* 글씨를 살짝 작게 */
-    font-weight: bold;
-    color: white;
-    margin-right: 6px; /* 태그 사이 간격 */
-  }
-  
-  /* type이 'success'일 때의 스타일 (초록색 계열) */
-  .status-tag.success {
-    background-color: #28a745;
-  }
-  
-  /* type이 'warning'일 때의 스타일 (빨간색 계열) */
-  .status-tag.warning {
-    background-color: #dc3545;
-  }
-  
-  /* type이 'info'일 때의 스타일 (회색 계열) */
-  .status-tag.info {
-    background-color: #6c757d;
-  }
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.95em;
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+}
+
+/* 결제 상태: 부드러운 초록색 / 차분한 빨간색 */
+.status-tag.paid { background-color: #20c997; }
+.status-tag.unpaid { background-color: #fa5252; }
+
+/* 수령 상태: 부드러운 파란색 / 차분한 회색 */
+.status-tag.delivered { background-color: #4c6ef5; }
+.status-tag.undelivered { background-color: #868e96; }
+
+/* 쌀 지참 상태: 정보성 청록색 / 주의를 끄는 주황색 */
+.status-tag.rice-ok { background-color: #15aabf; }
+.status-tag.rice-no { background-color: #ff922b; }

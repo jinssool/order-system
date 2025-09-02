@@ -145,3 +145,34 @@
     border: 1px solid #ccc;
     border-radius: 10px;
   }
+
+.consonant-filter-kiosk {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 30px;
+}
+
+.consonant-filter-kiosk button {
+  font-size: 1em;
+  font-weight: bold;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #868e96;
+  border-radius: 8px;
+  min-width: 45px;
+  height: 45px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.consonant-filter-kiosk button:hover {
+  background: #e9ecef;
+}
+
+.consonant-filter-kiosk button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
