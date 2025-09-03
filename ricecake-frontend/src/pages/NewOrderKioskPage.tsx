@@ -2,16 +2,17 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Order } from '../types';
-import Step1Customer from './NewOrderKioskSteps/Step1_Customer'; 
-import Step2_RiceCake from './NewOrderKioskSteps/Step2_RiceCake'; 
-import Step3_Confirm from './NewOrderKioskSteps/Step3_Confirm'; // 3단계 컴포넌트 import
+import Step1Customer from './NewOrderKioskSteps/Step1Customer'; // 이름 변경
+import Step2RiceCake from './NewOrderKioskSteps/Step2RiceCake'; // 이름 변경
+import Step3Confirm from './NewOrderKioskSteps/Step3Confirm';   // 이름 변경
 
-import './NewOrderKiosk.css'; // 키오스크 전용 스타일
+import './NewOrderKiosk.css';
 
 // 주문 데이터의 초기 상태
 const initialOrderState: Partial<Order> = {
   isPaid: false,
   isDelivered: false,
+  items: [], // items 배열을 명시적으로 초기화
 };
 
 const NewOrderKioskPage = () => {
@@ -41,7 +42,7 @@ const NewOrderKioskPage = () => {
           />
         )}
         {step === 2 && (
-          <Step2_RiceCake
+          <Step2RiceCake
             orderData={orderData}
             updateOrderData={updateOrderData}
             goToNextStep={goToNextStep}
@@ -49,9 +50,9 @@ const NewOrderKioskPage = () => {
           />
         )}
         {step === 3 && (
-          <Step3_Confirm
+          // --- updateOrderData prop 제거 ---
+          <Step3Confirm
             orderData={orderData}
-            updateOrderData={updateOrderData}
             goToPrevStep={goToPrevStep}
           />
         )}

@@ -151,7 +151,6 @@ const DailyStats: React.FC<Props> = ({ orders, selectedDate }) => {
                   <div key={o.id} className="alert-item">
                     <div className="time">{o.pickupTime}</div>
                     <div className="name">{o.customerName || '고객'}</div>
-                    <div className="muted">· {o.riceCakeType}</div>
                   </div>
                 ))}
               </div>

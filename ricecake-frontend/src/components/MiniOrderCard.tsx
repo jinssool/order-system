@@ -1,6 +1,5 @@
 // src/components/MiniOrderCard.tsx
 import type { Order } from "../types";
-import StatusTag from "./StatusTag";
 import './MiniOrderCard.css';
 
 interface MiniOrderCardProps {
@@ -8,14 +7,19 @@ interface MiniOrderCardProps {
 }
 
 const MiniOrderCard = ({ order }: MiniOrderCardProps) => {
+  const firstItem = order.items[0];
+  const itemSummary = order.items.length > 1 
+    ? `${firstItem.riceCakeName} 외 ${order.items.length - 1}건` 
+    : firstItem.riceCakeName;
+
   return (
     <div className="mini-order-card">
       <div className="mini-card-left">
         <p className="pickup-date">{order.pickupDate.substring(5)}</p>
-        <p className="sub-info">{order.customerName || order.riceCakeType}</p>
+        <p className="sub-info">{order.customerName}</p>
       </div>
       <div className="mini-card-right">
-        <p className="rice-cake-info">{order.riceCakeType} <span>{order.quantity}{order.unit}</span></p>
+        <p className="rice-cake-info">{itemSummary}</p>
       </div>
     </div>
   );

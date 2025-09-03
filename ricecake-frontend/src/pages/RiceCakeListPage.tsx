@@ -52,7 +52,7 @@ const RiceCakeListPage = () => {
       </div>
 
       <div className="consonant-filter">
-        <button className={!selectedConsonant ? 'active' : ''} onClick={() => setSelectedConsonant(null)}>전체</button>
+        <button className={!selectedConsonant ? 'active' : ''} onClick={() => setSelectedConsonant(null)}>all</button>
         {CONSONANTS.map(c => (
           <button key={c} className={selectedConsonant === c ? 'active' : ''} onClick={() => setSelectedConsonant(c)}>{c}</button>
         ))}

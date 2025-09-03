@@ -45,3 +45,18 @@
   background-color: transparent; color: #fa5252; border: 1px solid #fa5252;
 }
 .delete-button:hover { background-color: #fff5f5; }
+
+
+.status-cards-grid.single-row {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* 주문 품목 리스트 스타일 */
+.order-items-ul { list-style: none; padding: 0; margin: 0; }
+.order-items-ul li {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 1.2em; padding: 12px 0; border-bottom: 1px solid #f1f3f5;
+}
+.order-items-ul li:first-child { padding-top: 0; }
+.order-items-ul li .item-name { font-weight: 500; }
+.order-items-ul li .item-qty { font-weight: bold; color: #007bff; }

@@ -29,3 +29,16 @@
   background-color: transparent; color: #fa5252; border: 1px solid #fa5252;
 }
 .item-actions .delete-button:hover { background-color: #fff5f5; }
+
+.list-item-link, .list-item-link:visited {
+  color: inherit; /* 부모 요소의 글자색을 그대로 사용 */
+  text-decoration: none;
+}
+.list-item-link:hover .list-item {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+.item-go-detail {
+  font-size: 2em;
+  color: #adb5bd;
+}

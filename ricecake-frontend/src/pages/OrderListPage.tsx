@@ -18,7 +18,6 @@ const OrderListPage = () => {
   const [sortType, setSortType] = useState<SortType>('time');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // --- 날짜별 주문 건수를 계산하는 로직 추가 ---
   const ordersByDate = useMemo(() => {
     return orders.reduce((acc, order) => {
       const date = order.pickupDate;
@@ -26,7 +25,6 @@ const OrderListPage = () => {
       return acc;
     }, {} as Record<string, number>);
   }, [orders]);
-  // ------------------------------------------
 
   const ordersForSelectedDate = useMemo(() => {
     const dateString = getYYYYMMDD(selectedDate);
@@ -35,33 +33,39 @@ const OrderListPage = () => {
   
   const sortedAndFilteredOrders = useMemo(() => {
     let filtered = [...ordersForSelectedDate];
+
+    // --- 검색 로직 수정 ---
     if (searchQuery) {
       filtered = filtered.filter(order => 
-        order.customerName?.includes(searchQuery) || 
-        order.riceCakeType.includes(searchQuery)
+        order.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        order.items.some(item => item.riceCakeName.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
+    // --- 정렬 로직 수정 ---
     switch (sortType) {
-      case 'cake': return filtered.sort((a, b) => a.riceCakeType.localeCompare(b.riceCakeType));
-      case 'status': return filtered.sort((a, b) => Number(a.isDelivered) - Number(b.isDelivered));
-      case 'time': default: return filtered.sort((a, b) => a.pickupTime.localeCompare(b.pickupTime));
+      case 'cake': 
+        return filtered.sort((a, b) => 
+          a.items[0].riceCakeName.localeCompare(b.items[0].riceCakeName)
+        );
+      case 'status': 
+        return filtered.sort((a, b) => Number(a.isDelivered) - Number(b.isDelivered));
+      case 'time': 
+      default:
+        return filtered.sort((a, b) => a.pickupTime.localeCompare(b.pickupTime));
     }
   }, [ordersForSelectedDate, sortType, searchQuery]);
   
-  // --- 점 색상을 결정하도록 로직 수정 ---
   const renderTileContent = ({ date, view }: { date: Date, view: string }) => {
     if (view === 'month') {
       const dateString = getYYYYMMDD(date);
       const count = ordersByDate[dateString];
-
       if (count > 0) {
-        const intensity = count >= 15 ? 'high' : count >= 8 ? 'medium' : 'low';
+        const intensity = count >= 5 ? 'high' : count >= 2 ? 'medium' : 'low';
         return <div className={`order-dot ${intensity}`}></div>;
       }
     }
     return null;
   };
-  // ----------------------------------
 
   const formatMonthYear = (locale: string | undefined, date: Date) => `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   const formatShortWeekday = (locale: string | undefined, date: Date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];

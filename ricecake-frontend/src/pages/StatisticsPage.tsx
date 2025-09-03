@@ -33,11 +33,13 @@ const StatisticsPage = () => {
   // 1. 품목별 판매 순위
   const cakeSalesData = useMemo(() => {
     const sales = filteredOrders.reduce((acc, order) => {
-      acc[order.riceCakeType] = (acc[order.riceCakeType] || 0) + order.quantity;
+      order.items.forEach(item => {
+        acc[item.riceCakeName] = (acc[item.riceCakeName] || 0) + item.quantity;
+      });
       return acc;
     }, {} as Record<string, number>);
     return Object.entries(sales)
-      .map(([name, 수량]) => ({ name, 수량 }))
+      .map(([name, 수량]) => ({ name, 수량: parseFloat(수량.toFixed(1)) }))
       .sort((a, b) => b.수량 - a.수량)
       .slice(0, 5);
   }, [filteredOrders]);
@@ -46,14 +48,15 @@ const StatisticsPage = () => {
   const cakeMonthlyPopularity = useMemo(() => {
     const monthlySales = Array.from({ length: 12 }, (_, i) => ({ month: `${i + 1}월`, 수량: 0 }));
     orders.forEach(order => {
-      if (order.riceCakeType === selectedCake) {
-        const monthIndex = new Date(order.pickupDate).getMonth();
-        monthlySales[monthIndex].수량 += order.quantity;
-      }
+      order.items.forEach(item => {
+        if (item.riceCakeName === selectedCake) {
+          const monthIndex = new Date(order.pickupDate).getMonth();
+          monthlySales[monthIndex].수량 += item.quantity;
+        }
+      });
     });
-    return monthlySales;
+    return monthlySales.map(m => ({ ...m, 수량: parseFloat(m.수량.toFixed(1)) }));
   }, [orders, selectedCake]);
-
   // 3. 우수 고객 리스트
   const topCustomersData = useMemo(() => {
     const customerOrders = filteredOrders.reduce((acc, order) => {

@@ -15,3 +15,20 @@
 .form-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: 40px; }
 .submit-button { background-color: #28a745; color: white; font-weight: bold; border:none; }
 .cancel-button { background-color: #6c757d; color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-size: 1em; }
+.edit-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .edit-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e9ecef;
+  }
+  .edit-item .item-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 0 0 16px;
+  }

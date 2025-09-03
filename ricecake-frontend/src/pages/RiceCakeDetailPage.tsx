@@ -2,7 +2,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useRiceCakes } from '../contexts/RiceCakesContext';
 import { useOrders } from '../contexts/OrdersContext';
-import MiniOrderCard from '../components/MiniOrderCard'; // OrderCard 대신 MiniOrderCard import
+import MiniOrderCard from '../components/MiniOrderCard';
 import './DetailPage.css';
 
 
@@ -13,9 +13,12 @@ const RiceCakeDetailPage = () => {
   const { orders } = useOrders();
 
   const riceCake = riceCakes.find(c => c.id === Number(cakeId));
+  
+  // --- 이 부분의 로직을 수정합니다 ---
   const relatedOrders = orders
-    .filter(o => o.riceCakeType === riceCake?.name)
+    .filter(o => o.items.some(item => item.riceCakeId === riceCake?.id))
     .sort((a, b) => b.pickupDate.localeCompare(a.pickupDate));
+  // --------------------------------
 
   const handleDelete = () => {
     if (!riceCake) return;
