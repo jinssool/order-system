@@ -1,4 +1,4 @@
-// src/pages/NewOrderKioskSteps/Step2_RiceCake.tsx
+
 import { useState, useMemo } from 'react';
 import { useRiceCakes } from '../../contexts/RiceCakesContext';
 import { getFirstConsonant } from '../../utils/hangulUtils';
