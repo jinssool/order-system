@@ -158,7 +158,7 @@ const OrderListPage = () => {
           <div className="order-list-content">
             {sortedAndFilteredOrders.length > 0 ? (
                 sortedAndFilteredOrders.map(order => (
-                    <Link to={`/orders/${order.id}`} key={order.id} className="order-card-link">
+                    <Link to={`/orders/${order.orderId}`} key={order.orderId} className="order-card-link">
                       <OrderCard order={order} />
                     </Link>
                 ))

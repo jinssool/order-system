@@ -11,7 +11,7 @@ export interface Customer {
 export interface RiceCakeType {
   id: number;
   name: string;
-  pricePerUnit: number;
+  price: number;
   unit: Unit;
 }
 

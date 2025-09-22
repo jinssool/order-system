@@ -40,15 +40,23 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
   }, [orderData]);
 
   const calculateFinalPrice = useMemo(() => {
-    const orderTable = orderData.orderTables?.[0];
-    if (!orderTable || !orderTable.pricePerUnit || !orderTable.quantity) {
-      return 0;
-    }
-    return orderTable.pricePerUnit * orderTable.quantity;
-  }, [orderData.orderTables]);
+    // 장바구니에 담긴 모든 떡의 총액을 계산합니다.
+    return (orderData.items || []).reduce((total, item) => {
+      const price = item.price ?? 0;
+      const quantity = item.quantity ?? 0;
+      return total + (price * quantity);
+    }, 0);
+  }, [orderData.items]);
 
   const handleSaveOrder = async () => {
     const pickupDateTime = `${getYYYYMMDD(pickupDate)}T${pickupHour}:${pickupMinute}:00`;
+
+    // 백엔드 API 스키마에 맞는 orderTables 배열을 생성합니다.
+    const orderTablesForApi = (orderData.items || []).map(item => ({
+      productId: item.riceCakeId,
+      quantity: item.quantity,
+      unit: item.unit
+    }));
 
     const finalOrderData = {
       customerId: orderData.customerId,
@@ -56,7 +64,9 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
       memo: memo,
       finalPrice: calculateFinalPrice,
       hasRice: hasRice,
-      orderTables: orderData.orderTables
+      isPaid: false,
+      isPickedUp: false,
+      orderTables: orderTablesForApi // 수정된 배열 사용
     };
 
     if (!finalOrderData.customerId || !finalOrderData.orderTables || finalOrderData.orderTables.length === 0) {
