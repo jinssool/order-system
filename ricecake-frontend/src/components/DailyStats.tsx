@@ -17,7 +17,7 @@ interface Props {
   selectedDate: Date;
 }
 
-type TimeSlotKey = '오전' | '점심' | '오후';
+type TimeSlotKey = '새벽' | '오전' | '오후';
 
 const parseHourSafe = (hhmm?: string) => {
   if (!hhmm || typeof hhmm !== 'string') return null;
@@ -32,10 +32,9 @@ const getTimeSlot = (hhmm?: string): TimeSlotKey | null => {
   const h = parseHourSafe(hhmm);
   if (h === null) return null;
   // Define slots (explicit, avoids off-by-one):
-  // 오전: 08-10, 점심: 11-13, 오후: 14-23
-  if (h >= 8 && h <= 10) return '오전';
-  if (h >= 11 && h <= 13) return '점심';
-  if (h >= 14 && h <= 23) return '오후';
+  if (h >= 5 && h <= 9) return '새벽';
+  if (h >= 9 && h <= 13) return '오전';
+  if (h >= 13 && h <= 23) return '오후';
   return null;
 };
 
@@ -65,7 +64,7 @@ const DailyStats: React.FC<Props> = ({ orders, selectedDate }) => {
 
   // Memoized timeslot counts
   const ordersByTimeSlot = useMemo(() => {
-    const acc: Record<TimeSlotKey, number> = { 오전: 0, 점심: 0, 오후: 0 };
+    const acc: Record<TimeSlotKey, number> = { 새벽: 0, 오전 : 0, 오후: 0 };
     for (const o of orders) {
       const slot = getTimeSlot(o.pickupTime);
       if (slot) acc[slot]++;
@@ -126,15 +125,15 @@ const DailyStats: React.FC<Props> = ({ orders, selectedDate }) => {
         <span className="container-label">시간대별 분포</span>
         <div className="timeslot-row">
           <div className="timeslot-item">
-            <span>오전 (8–10시)</span>
+            <span>새벽 (5–9시)</span>
+            <strong>{ordersByTimeSlot['새벽'] || 0}건</strong>
+          </div>
+          <div className="timeslot-item">
+            <span>오전(9–13시)</span>
             <strong>{ordersByTimeSlot['오전'] || 0}건</strong>
           </div>
           <div className="timeslot-item">
-            <span>점심(11–13시)</span>
-            <strong>{ordersByTimeSlot['점심'] || 0}건</strong>
-          </div>
-          <div className="timeslot-item">
-            <span>오후 (14시~)</span>
+            <span>오후 (13시~)</span>
             <strong>{ordersByTimeSlot['오후'] || 0}건</strong>
           </div>
         </div>
