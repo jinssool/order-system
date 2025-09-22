@@ -27,7 +27,7 @@ export interface Order {
   id: number;
   customerId: number;
   customerName?: string;
-  items: OrderItem[];
+  orderTable: OrderItem[];
   pickupDate: string;
   pickupTime: string;
   isPaid: boolean;

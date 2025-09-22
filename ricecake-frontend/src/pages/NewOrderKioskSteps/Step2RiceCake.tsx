@@ -1,3 +1,5 @@
+// src/pages/NewOrderKioskSteps/Step2_RiceCake.tsx
+
 import { useState, useMemo, useEffect } from 'react';
 import { getFirstConsonant } from '../../utils/hangulUtils';
 import type { Order, OrderItem, Unit, RiceCakeType } from '../../types';
@@ -19,7 +21,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
   const [error, setError] = useState<string | null>(null);
 
   const [selectedConsonant, setSelectedConsonant] = useState<string | null>(null);
-  const cartItems = orderData.orderTables || []; // 'items' -> 'orderTables'로 변경
+  const cartItems = orderData.orderTables || [];
 
   useEffect(() => {
     const fetchRiceCakes = async () => {
@@ -54,7 +56,6 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
   }, [riceCakes, selectedConsonant]);
 
   const addToCart = (cake: RiceCakeType) => {
-    // 떡의 ID를 productID로 저장합니다.
     if (cartItems.find(item => item.productId === cake.id)) {
       alert("이미 장바구니에 있는 떡입니다."); return;
     }
@@ -66,7 +67,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
       hasRice: false,
       price: cake.price
     };
-    updateOrderData({ orderTables: [...cartItems, newItem] }); // 'items' -> 'orderTables'로 변경
+    updateOrderData({ orderTables: [...cartItems, newItem] });
   };
 
   const updateItem = (productId: number, newValues: Partial<OrderItem>) => {
@@ -74,17 +75,17 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
     const newItems = cartItems.map(item =>
         item.productId === productId ? { ...item, ...newValues } : item
     );
-    updateOrderData({ orderTables: newItems }); // 'items' -> 'orderTables'로 변경
+    updateOrderData({ orderTables: newItems });
   };
 
   const handleSetAllRice = () => {
     const newItems = cartItems.map(item => ({ ...item, hasRice: true }));
-    updateOrderData({ orderTables: newItems }); // 'items' -> 'orderTables'로 변경
+    updateOrderData({ orderTables: newItems });
   };
 
   const removeFromCart = (productId: number) => {
     const newItems = cartItems.filter(item => item.productId !== productId);
-    updateOrderData({ orderTables: newItems }); // 'items' -> 'orderTables'로 변경
+    updateOrderData({ orderTables: newItems });
   };
 
   const handleNext = () => {
@@ -93,25 +94,17 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
       return;
     }
 
-    // 백엔드 API 스키마에 맞게 productId와 quantity만 포함하는 배열 생성
-    const orderTablesForApi = cartItems.map(item => ({
-      productId: item.productId,
-      quantity: item.quantity,
-    }));
-
-    // 최종 가격 계산
     const finalPrice = cartItems.reduce((total, item) => {
       const price = item.price ?? 0;
       const quantity = item.quantity ?? 0;
       return total + (price * quantity);
     }, 0);
 
-
+    // 다음 스텝으로 넘어갈 때 최종 가격과 orderTables를 업데이트합니다.
     updateOrderData({
       finalPrice,
-      orderTables: orderTablesForApi
+      orderTables: cartItems
     });
-
 
     goToNextStep();
   };
@@ -185,4 +178,5 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
       </div>
   );
 };
+
 export default Step2_RiceCake;

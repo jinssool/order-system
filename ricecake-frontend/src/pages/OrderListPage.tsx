@@ -38,8 +38,16 @@ const OrderListPage = () => {
           pickupDate: order.pickupDate ? new Date(order.pickupDate).toISOString().substring(0, 10) : '',
           pickupTime: order.pickupDate ? new Date(order.pickupDate).toISOString().substring(11, 16) : '',
           customerName: order.customer?.name || '정보 없음',
-          riceCakeType: order.orderTables?.[0]?.productName || '정보 없음',
           isDelivered: order.isPickedUp,
+          // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
+          items: (order.products || []).map((product: any) => ({
+            // API 응답의 productName을 riceCakeName으로 매핑
+            riceCakeName: product.productName || '정보 없음',
+            quantity: product.quantity,
+            unit: product.unit || '정보 없음',
+            // isPaid와 hasRice는 주문 전체에 대한 정보이므로, order 객체에서 직접 가져옵니다.
+            hasRice: order.hasRice,
+          }))
         }));
 
         setOrders(formattedOrders);
@@ -71,14 +79,14 @@ const OrderListPage = () => {
     if (searchQuery) {
       filtered = filtered.filter(order =>
           order.customerName?.includes(searchQuery) ||
-          order.riceCakeType.includes(searchQuery)
+          (order.items?.[0]?.riceCakeName || '').includes(searchQuery)
       );
     }
 
     switch (sortType) {
       case 'cake':
         return filtered.sort((a, b) =>
-            (a.riceCakeType || '').localeCompare(b.riceCakeType || '')
+            (a.items?.[0]?.riceCakeName || '').localeCompare(b.items?.[0]?.riceCakeName || '')
         );
       case 'status':
         return filtered.sort((a, b) => Number(a.isDelivered) - Number(b.isDelivered));

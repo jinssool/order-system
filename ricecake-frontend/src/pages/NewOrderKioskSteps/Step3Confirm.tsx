@@ -1,9 +1,10 @@
 // src/pages/NewOrderKioskSteps/Step3_Confirm.tsx
-import { useState, useEffect, useMemo } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import { getYYYYMMDD } from '../../utils/dateUtils';
-import type { Order, RiceCakeType } from '../../types';
+import type { Order } from '../../types';
 import '../NewOrderKiosk.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
@@ -39,21 +40,15 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
     }
   }, [orderData]);
 
-  const calculateFinalPrice = useMemo(() => {
-    // 장바구니에 담긴 모든 떡의 총액을 계산합니다.
-    return (orderData.items || []).reduce((total, item) => {
-      const price = item.price ?? 0;
-      const quantity = item.quantity ?? 0;
-      return total + (price * quantity);
-    }, 0);
-  }, [orderData.items]);
+  const finalPrice = orderData.finalPrice ?? 0;
+  const cartItems = orderData.orderTables || []; // 'orderTables'로 통일
 
   const handleSaveOrder = async () => {
     const pickupDateTime = `${getYYYYMMDD(pickupDate)}T${pickupHour}:${pickupMinute}:00`;
 
     // 백엔드 API 스키마에 맞는 orderTables 배열을 생성합니다.
-    const orderTablesForApi = (orderData.items || []).map(item => ({
-      productId: item.riceCakeId,
+    const orderTablesForApi = (cartItems || []).map(item => ({
+      productId: item.productId, // 'riceCakpreId' 오타 수정
       quantity: item.quantity,
       unit: item.unit
     }));
@@ -62,12 +57,14 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
       customerId: orderData.customerId,
       pickupDate: pickupDateTime,
       memo: memo,
-      finalPrice: calculateFinalPrice,
+      finalPrice: finalPrice,
       hasRice: hasRice,
       isPaid: false,
       isPickedUp: false,
-      orderTables: orderTablesForApi // 수정된 배열 사용
+      orderTables: orderTablesForApi
     };
+
+    console.log(finalOrderData); // 최종 데이터 확인
 
     if (!finalOrderData.customerId || !finalOrderData.orderTables || finalOrderData.orderTables.length === 0) {
       alert('고객 또는 떡 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
@@ -137,7 +134,7 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
           <div className="order-summary">
             <h3>최종 주문 확인</h3>
             <p><strong>고객:</strong> {orderData.customerName || '선택되지 않음'}</p>
-            <p><strong>총액:</strong> {calculateFinalPrice.toLocaleString()}원</p>
+            <p><strong>총액:</strong> {finalPrice.toLocaleString()}원</p>
             <p><strong>픽업 날짜:</strong> {getYYYYMMDD(pickupDate)}</p>
             <p><strong>픽업 시간:</strong> {pickupHour}:{pickupMinute}</p>
             <p><strong>쌀 지참:</strong> {hasRice ? '예' : '아니오'}</p>
@@ -150,4 +147,5 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
       </div>
   );
 };
+
 export default Step3_Confirm;
