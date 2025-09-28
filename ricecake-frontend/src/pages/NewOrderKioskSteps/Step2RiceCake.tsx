@@ -55,13 +55,14 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
     return filtered;
   }, [riceCakes, selectedConsonant]);
 
+
   const addToCart = (cake: RiceCakeType) => {
     if (cartItems.find(item => item.productId === cake.id)) {
       alert("이미 장바구니에 있는 떡입니다."); return;
     }
     const newItem = {
       productId: cake.id,
-      riceCakeName: cake.name,
+      productName: cake.name,
       quantity: 1,
       unit: cake.unit,
       hasRice: false,
@@ -151,7 +152,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
             {cartItems.length > 0 ? (
                 cartItems.map(item => (
                     <div key={item.productId} className="cart-item-v2">
-                      <p className="item-name">{item.riceCakeName}</p>
+                      <p className="item-name">{item.productName}</p>
                       <div className="item-controls-grid">
                         <label>수량</label>
                         <input type="number" value={item.quantity} onChange={(e) => updateItem(item.productId, { quantity: Number(e.target.value) })} min="1"/>
