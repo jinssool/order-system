@@ -1,4 +1,5 @@
 // src/main.tsx
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
@@ -6,7 +7,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 // Providers
 import { OrdersProvider } from './contexts/OrdersContext';
 import { CustomersProvider } from './contexts/CustomersContext';
-import { RiceCakesProvider } from './contexts/RiceCakesContext'; // 새로 추가
+import { RiceCakesProvider } from './contexts/RiceCakesContext';
 
 // Main App Component & Global CSS
 import App from './App';
@@ -21,21 +22,32 @@ import CustomerListPage from './pages/CustomerListPage';
 import CustomerCreatePage from './pages/CustomerCreatePage';
 import CustomerEditPage from './pages/CustomerEditPage';
 import NewOrderKioskPage from './pages/NewOrderKioskPage';
-import RiceCakeListPage from './pages/RiceCakeListPage'; // 새로 추가
-import RiceCakeCreatePage from './pages/RiceCakeCreatePage'; // 새로 추가
-import RiceCakeEditPage from './pages/RiceCakeEditPage'; // 새로 추가
-import CustomerDetailPage from './pages/CustomerDetailPage'; // 새로 추가
-import RiceCakeDetailPage from './pages/RiceCakeDetailPage'; // 새로 추가
-import StatisticsPage from './pages/StatisticsPage'; // 새로 추가
+import RiceCakeListPage from './pages/RiceCakeListPage';
+import RiceCakeCreatePage from './pages/RiceCakeCreatePage';
+import RiceCakeEditPage from './pages/RiceCakeEditPage';
+import CustomerDetailPage from './pages/CustomerDetailPage';
+import RiceCakeDetailPage from './pages/RiceCakeDetailPage';
+import StatisticsPage from './pages/StatisticsPage';
 
+// ✅ PWA Service Worker Registration
+// 모든 컴포넌트가 렌더링되기 전에 등록하는 것이 올바른 순서입니다.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker 등록 성공:', registration);
+        })
+        .catch(error => {
+          console.error('Service Worker 등록 실패:', error);
+        });
+  });
+}
 
-
-
-// 라우터 설정: 모든 페이지 경로를 여기에 정의합니다.
+// ✅ 라우터 설정: 모든 페이지 경로를 여기에 정의합니다.
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <App />, // App 컴포넌트가 모든 자식 경로의 레이아웃 역할을 합니다.
     children: [
       // 주문 관련 경로들
       { path: "", element: <OrderListPage /> },
@@ -46,6 +58,7 @@ const router = createBrowserRouter([
       // 고객 관련 경로들
       { path: "customers", element: <CustomerListPage /> },
       { path: "customers/new", element: <CustomerCreatePage /> },
+      { path: "customers/:customerId", element: <CustomerDetailPage /> },
       { path: "customers/:customerId/edit", element: <CustomerEditPage /> },
 
       // --- 키오스크 주문 경로 추가 ---
@@ -53,25 +66,23 @@ const router = createBrowserRouter([
       // 떡 관리 관련 경로들
       { path: "rice-cakes", element: <RiceCakeListPage /> },
       { path: "rice-cakes/new", element: <RiceCakeCreatePage /> },
+      { path: "rice-cakes/:cakeId", element: <RiceCakeDetailPage /> },
       { path: "rice-cakes/:cakeId/edit", element: <RiceCakeEditPage /> },
 
       { path: "stats", element: <StatisticsPage /> },
-      { path: "customers/:customerId", element: <CustomerDetailPage /> }, // 고객 상세 페이지 라우트
-      { path: "rice-cakes/:cakeId", element: <RiceCakeDetailPage /> }, // 떡 상세 페이지 라우트
-      
-
     ]
   }
 ]);
 
+// ✅ 단일 진입점: 모든 Providers가 라우터를 감싸는 올바른 구조입니다.
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <CustomersProvider>
-      <RiceCakesProvider>
-        <OrdersProvider>
-          <RouterProvider router={router} />
-        </OrdersProvider>
-      </RiceCakesProvider>
-    </CustomersProvider>
-  </React.StrictMode>,
-)
+    <React.StrictMode>
+      <CustomersProvider>
+        <RiceCakesProvider>
+          <OrdersProvider>
+            <RouterProvider router={router} />
+          </OrdersProvider>
+        </RiceCakesProvider>
+      </CustomersProvider>
+    </React.StrictMode>,
+);
