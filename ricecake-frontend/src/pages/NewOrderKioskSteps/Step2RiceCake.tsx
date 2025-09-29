@@ -109,6 +109,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
     
     const price = getPriceForUnit(selectedCake, modalData.unit);
     const newItem = {
+      id: Date.now() + Math.random(), // 고유 ID 생성
       riceCakeId: selectedCake.id,
       riceCakeName: selectedCake.name,
       quantity: modalData.quantity,
@@ -128,8 +129,8 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
     setSelectedCake(null);
   };
 
-  const removeFromCart = (riceCakeId: number) => {
-    const newItems = cartItems.filter((item: any) => item.riceCakeId !== riceCakeId);
+  const removeFromCart = (itemId: number) => {
+    const newItems = cartItems.filter((item: any) => item.id !== itemId);
     updateOrderData({ orderTable: newItems });
   };
 
@@ -184,7 +185,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
         <div className="cart-items-list scrollable">
           {cartItems.length > 0 ? (
               cartItems.map((item: any) => (
-                  <div key={item.riceCakeId} className="cart-item-v2">
+                  <div key={item.id} className="cart-item-v2">
                     <div className="item-info">
                       <p className="item-name">{item.riceCakeName}</p>
                       <p className="item-details">
@@ -193,7 +194,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
                         {item.memo && <span className="memo-indicator"> - {item.memo}</span>}
                       </p>
                     </div>
-                    <button onClick={() => removeFromCart(item.riceCakeId)} className="remove-btn">×</button>
+                    <button onClick={() => removeFromCart(item.id)} className="remove-btn">×</button>
                   </div>
               ))
           ) : ( <p className="empty-cart-message">떡을 선택하여 추가하세요.</p> )}

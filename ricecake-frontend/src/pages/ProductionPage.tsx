@@ -1,6 +1,8 @@
 // src/pages/ProductionPage.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import './ProductionPage.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
@@ -33,20 +35,21 @@ interface ProductionItem {
   orders: Order[];
   customerName?: string;
   unitBreakdown?: string; // 단위별 수량 표시를 위한 필드
+  unitQuantities?: Map<string, number>; // 단위별 수량 관리
 }
 
 const ProductionPage = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => {
-    // 한국 시간 기준으로 오늘 날짜 설정
+    // 로컬 시간 기준으로 오늘 날짜 설정
     const now = new Date();
-    const koreaTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
-    return koreaTime;
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'rice'>('name');
+  const [showCalendar, setShowCalendar] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -68,7 +71,13 @@ const ProductionPage = () => {
     fetchOrders();
   }, []);
 
-  const selectedDateString = selectedDate.toISOString().split('T')[0];
+  const selectedDateString = useMemo(() => {
+    // 한국 시간 기준으로 날짜 문자열 생성
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }, [selectedDate]);
   
   const productionItems = useMemo(() => {
     // pickupDate가 LocalDateTime 형식 (YYYY-MM-DDTHH:mm:ss)이므로 날짜 부분만 추출
@@ -117,22 +126,32 @@ const ProductionPage = () => {
             const existing = itemMap.get(key)!;
             existing.orders.push(order);
             
-            // 단위가 다르면 합쳐서 표시 (예: "1kg + 3개")
-            if (existing.unit !== unit) {
-              // 기존 단위와 새 단위를 합쳐서 표시
-              existing.unitBreakdown = `${existing.totalQuantity}${existing.unit} + ${quantity}${unit}`;
-              existing.totalQuantity = 0; // totalQuantity는 더 이상 사용하지 않음
-            } else {
-              // 같은 단위면 수량만 합치기
-              existing.totalQuantity += quantity;
+            // 단위별 수량을 Map으로 관리
+            if (!existing.unitQuantities) {
+              existing.unitQuantities = new Map();
+              existing.unitQuantities.set(existing.unit, existing.totalQuantity);
             }
+            
+            // 현재 단위의 수량 추가
+            const currentQuantity = existing.unitQuantities.get(unit) || 0;
+            existing.unitQuantities.set(unit, currentQuantity + quantity);
+            
+            // unitBreakdown 문자열 생성
+            const unitEntries = Array.from(existing.unitQuantities.entries())
+              .filter(([_, qty]) => qty > 0)
+              .map(([u, qty]) => `${qty}${u}`)
+              .join(' + ');
+            
+            existing.unitBreakdown = unitEntries;
+            existing.totalQuantity = 0; // unitBreakdown 사용 시 totalQuantity는 무시
           } else {
             itemMap.set(key, {
               riceCakeName: riceCakeName,
               hasRice: hasRice,
               totalQuantity: quantity,
               unit: unit,
-              orders: [order]
+              orders: [order],
+              unitQuantities: new Map([[unit, quantity]])
             });
           }
         }
@@ -196,12 +215,34 @@ const ProductionPage = () => {
               weekday: 'short'
             })}
           </span>
-          <input
-            type="date"
-            value={selectedDateString}
-            onChange={(e) => handleDateChange(new Date(e.target.value))}
-            className="date-input"
-          />
+          <button 
+            className="today-button"
+            onClick={() => {
+              const today = new Date();
+              setSelectedDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+            }}
+          >
+            오늘
+          </button>
+          <div className="calendar-icon" onClick={() => setShowCalendar(!showCalendar)}>
+            📅
+          </div>
+          {showCalendar && (
+            <div className="calendar-container">
+              <Calendar
+                onChange={(date) => {
+                  handleDateChange(date as Date);
+                  setShowCalendar(false);
+                }}
+                value={selectedDate}
+                locale="ko"
+                calendarType="hebrew"
+                formatDay={(_, date) => date.getDate().toString()}
+                formatMonthYear={(_, date) => `${date.getFullYear()}년 ${date.getMonth() + 1}월`}
+                formatShortWeekday={(_, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -226,9 +267,9 @@ const ProductionPage = () => {
         
         {productionItems.length > 0 ? (
           <div className="production-list">
-            {productionItems.map((item) => (
+            {productionItems.map((item, index) => (
               <button 
-                key={`${item.riceCakeName}_${item.hasRice ? 'rice' : 'no-rice'}`}
+                key={`${item.riceCakeName}_${item.hasRice ? 'rice' : 'no-rice'}_${item.customerName || 'no-customer'}_${index}`}
                 className="production-item"
                 onClick={() => handleItemClick(item)}
                 type="button"

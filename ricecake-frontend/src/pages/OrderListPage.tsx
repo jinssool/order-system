@@ -49,7 +49,7 @@ const OrderListPage = () => {
               riceCakeName: product.productName || '정보 없음',
               quantity: product.quantity ?? 0,
               unit: product.unit || '정보 없음',
-              hasRice: order.hasRice,
+              hasRice: product.hasRice !== undefined ? product.hasRice : order.hasRice,
             }))
           };
         });

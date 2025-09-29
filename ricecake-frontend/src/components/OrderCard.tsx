@@ -11,8 +11,6 @@ interface OrderCardProps {
 const OrderCard = ({ order }: OrderCardProps) => {
     // order.items가 존재하는지 먼저 확인하고, 첫 번째 요소를 가져옵니다.
     const firstItem = order.products?.[0];
-    // order.items가 존재하는지 먼저 확인하고, some 메서드를 호출합니다.
-    const hasRiceInAnyItem = order.products?.some(item => item.hasRice);
 
     // 아이템이 없는 주문이라면 null을 반환하여 렌더링하지 않습니다.
     if (!firstItem) {
@@ -44,7 +42,6 @@ const OrderCard = ({ order }: OrderCardProps) => {
                         ? <StatusTag label="수령완료" type="delivered" />
                         : <StatusTag label="미수령" type="undelivered" />
                     }
-                    {hasRiceInAnyItem && <StatusTag label="쌀있음" type="rice-ok" />}
                 </div>
             </div>
         </div>
