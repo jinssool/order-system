@@ -105,7 +105,7 @@ const Step1Customer = ({ updateOrderData, goToNextStep }: StepProps) => {
             <div className="consonant-filter-kiosk">
                 <button
                     className={!selectedConsonant ? 'active' : ''}
-                    onClick={() => { setSelectedConsonant(null); setSearchQuery(''); }}>전체</button>
+                    onClick={() => { setSelectedConsonant(null); setSearchQuery(''); }}>All</button>
                 {CONSONANTS.map(c => (
                     <button
                         key={c}

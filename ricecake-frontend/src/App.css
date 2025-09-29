@@ -20,7 +20,27 @@
     color: #888;
     font-weight: bold;
     padding: 10px;
+    transition: color 0.2s;
+  }
+  .bottom-nav a:hover {
+    color: #007bff;
   }
   .bottom-nav a.active {
     color: #007bff;
+  }
+  .bottom-nav a:visited {
+    color: #888; /* 방문한 링크도 기본 색상 유지 */
+  }
+  .bottom-nav a.active:visited {
+    color: #007bff; /* 활성 상태일 때는 파란색 유지 */
+  }
+
+  /* 모든 링크의 밑줄 제거 */
+  a {
+    text-decoration: none !important;
+  }
+  
+  /* 방문한 링크 색상 유지 */
+  a:visited {
+    color: inherit !important;
   }

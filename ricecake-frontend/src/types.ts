@@ -4,7 +4,8 @@ export type Unit = '개' | 'kg' | '되' | '말' | '팩';
 export interface Customer {
   id: number;
   name: string;
-  phone: string;
+  phoneNumber: string;
+  phone?: string; // 호환성을 위해 추가
   memo?: string;
 }
 
@@ -13,25 +14,37 @@ export interface RiceCakeType {
   name: string;
   price: number;
   unit: Unit;
+  isActive?: boolean;
+  // 단위별 가격 정보
+  pricePerKg?: number;
+  pricePerDoe?: number;
+  pricePerMal?: number;
+  pricePerPiece?: number;
+  pricePerPack?: number;
 }
 
 export interface OrderItem {
-  productId: number;
-  productName: string;
+  riceCakeId: number;
+  riceCakeName: string;
+  productName?: string; // 호환성을 위해 추가
   quantity: number;
   unit: Unit;
-  hasRice: boolean; // 쌀 지참 여부를 품목별로 관리
+  hasRice: boolean;
 }
 
 export interface Order {
-  id: number;
-  finalPrice: number;
-  memo: string;
+  id?: number; // 호환성을 위해 추가
+  orderId: number;
   customerId: number;
   customerName?: string;
-  orderTables: OrderItem[];
+  orderTable: OrderItem[];
+  orderTables?: OrderItem[]; // 호환성을 위해 추가
+  products?: any[]; // 호환성을 위해 추가
   pickupDate: string;
   pickupTime: string;
   isPaid: boolean;
-  isDelivered: boolean;
+  isPickedUp: boolean;
+  isDelivered?: boolean; // 호환성을 위해 추가
+  hasRice: boolean;
+  memo?: string;
 }

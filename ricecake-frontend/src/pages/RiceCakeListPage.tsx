@@ -14,6 +14,17 @@ const RiceCakeListPage = () => {
   const [selectedConsonant, setSelectedConsonant] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const getUnitPricesText = (cake: any) => {
+    const prices = [];
+    if (cake.pricePerKg) prices.push(`${cake.pricePerKg.toLocaleString()}원/kg`);
+    if (cake.pricePerDoe) prices.push(`${cake.pricePerDoe.toLocaleString()}원/되`);
+    if (cake.pricePerMal) prices.push(`${cake.pricePerMal.toLocaleString()}원/말`);
+    if (cake.pricePerPiece) prices.push(`${cake.pricePerPiece.toLocaleString()}원/개`);
+    if (cake.pricePerPack) prices.push(`${cake.pricePerPack.toLocaleString()}원/팩`);
+    
+    return prices.length > 0 ? prices.join(', ') : '가격 정보 없음';
+  };
+
   useEffect(() => {
     const fetchRiceCakes = async () => {
       setIsLoading(true);
@@ -61,23 +72,6 @@ const RiceCakeListPage = () => {
     return filtered;
   }, [riceCakes, selectedConsonant, searchQuery]);
 
-  const handleDelete = async (cake: any) => {
-    if (window.confirm(`'${cake.name}' 떡을 정말 삭제하시겠습니까?`)) {
-      try {
-        const res = await fetch(`${API_URL}/${cake.id}`, {
-          method: 'DELETE',
-        });
-        if (!res.ok) {
-          throw new Error('삭제에 실패했습니다.');
-        }
-        setRiceCakes(prev => prev.filter(c => c.id !== cake.id));
-        alert('떡 정보가 삭제되었습니다.');
-      } catch (e: any) {
-        alert(e.message);
-      }
-    }
-  };
-
   if (isLoading) return <div className="page-container">로딩 중...</div>;
   if (error) return <div className="page-container">오류: {error}</div>;
 
@@ -97,7 +91,7 @@ const RiceCakeListPage = () => {
           <Link to="/rice-cakes/new" className="add-button">새 떡 추가</Link>
         </div>
         <div className="consonant-filter">
-          <button className={!selectedConsonant ? 'active' : ''} onClick={() => setSelectedConsonant(null)}>전체</button>
+          <button className={!selectedConsonant ? 'active' : ''} onClick={() => setSelectedConsonant(null)}>All</button>
           {CONSONANTS.map(c => (
               <button key={c} className={selectedConsonant === c ? 'active' : ''} onClick={() => setSelectedConsonant(c)}>{c}</button>
           ))}
@@ -109,7 +103,7 @@ const RiceCakeListPage = () => {
                     <div className="list-item">
                       <div className="item-info">
                         <h3>{cake.name}</h3>
-                        <p>{cake.price.toLocaleString()}원 / {cake.unit}</p>
+                        <p>{getUnitPricesText(cake)}</p>
                       </div>
                       <div className="item-go-detail">›</div>
                     </div>

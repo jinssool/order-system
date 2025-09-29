@@ -6,21 +6,21 @@
 .detail-grid-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; }
 .info-section { background: #fff; border-radius: 12px; border: 1px solid #e9ecef; padding: 24px; margin-bottom: 24px; }
 .info-section:last-child { margin-bottom: 0; }
-.info-section h2 { margin-top: 0; border-bottom: 1px solid #f1f3f5; padding-bottom: 12px; margin-bottom: 16px; font-size: 1.5em; }
-.info-section p { font-size: 1.2em; line-height: 1.6; margin: 8px 0; }
+.info-section h2 { margin-top: 0; border-bottom: 1px solid #f1f3f5; padding-bottom: 12px; margin-bottom: 16px; font-size: 1.8em; }
+.info-section p { font-size: 1.4em; line-height: 1.6; margin: 12px 0; }
 .status-column { background: #fff; border-radius: 12px; border: 1px solid #e9ecef; padding: 24px; }
-.status-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.status-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
 .status-card { border-radius: 12px; padding: 20px; text-align: center; color: white; }
-.status-card .label { display: block; font-size: 1em; opacity: 0.9; margin-bottom: 8px; }
-.status-card .value { display: block; font-size: 1.8em; font-weight: bold; }
+.status-card .label { display: block; font-size: 1em; opacity: 0.9; margin-bottom: 6px; }
+.status-card .value { display: block; font-size: 1.4em; font-weight: bold; }
 
-/* 상태별 색상 (StatusTag와 동일하게) */
-.status-card.paid { background-color: #20c997; }
-.status-card.unpaid { background-color: #fa5252; }
-.status-card.delivered { background-color: #4c6ef5; }
-.status-card.undelivered { background-color: #868e96; }
-.status-card.rice-ok { background-color: #15aabf; }
-.status-card.rice-no { background-color: #ff922b; }
+/* 상태별 색상 - 비활성은 회색, 활성은 초록색 */
+.status-card.paid { background-color: #28a745; } /* 초록색 */
+.status-card.unpaid { background-color: #6c757d; } /* 회색 */
+.status-card.delivered { background-color: #28a745; } /* 초록색 */
+.status-card.undelivered { background-color: #6c757d; } /* 회색 */
+.status-card.rice-ok { background-color: #28a745; } /* 초록색 */
+.status-card.rice-no { background-color: #6c757d; } /* 회색 */
 
 .action-buttons-group { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
 .payment-button { background-color: #20c997; /* 새 색상 적용 */ }
@@ -59,4 +59,62 @@
 }
 .order-items-ul li:first-child { padding-top: 0; }
 .order-items-ul li .item-name { font-weight: 500; }
-.order-items-ul li .item-qty { font-weight: bold; color: #007bff; }
+/* 링크 색상 수정 */
+.info-section a {
+  color: #007bff;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.info-section a:hover {
+  color: #0056b3;
+}
+
+.info-section a:visited {
+  color: #007bff; /* 방문한 링크도 파란색 유지 */
+}
+
+/* 주문 아이템 상세 스타일 */
+.order-items-list {
+  margin-top: 12px;
+}
+
+.order-item-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 1.2em;
+}
+
+.order-item-detail:last-child {
+  border-bottom: none;
+}
+
+.order-item-detail .item-name {
+  font-weight: 500;
+  flex: 1;
+}
+
+.order-item-detail .item-quantity {
+  margin: 0 16px;
+  color: #6c757d;
+}
+
+.order-item-detail .rice-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.order-item-detail .rice-status.has-rice {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.order-item-detail .rice-status.no-rice {
+  background-color: #f8d7da;
+  color: #721c24;
+}

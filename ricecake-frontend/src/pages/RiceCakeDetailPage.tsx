@@ -56,9 +56,21 @@ const RiceCakeDetailPage = () => {
     }
   };
 
+  const getUnitPrices = (riceCake: any) => {
+    const prices = [];
+    if (riceCake.pricePerKg) prices.push({ unit: 'kg', price: riceCake.pricePerKg });
+    if (riceCake.pricePerDoe) prices.push({ unit: '되', price: riceCake.pricePerDoe });
+    if (riceCake.pricePerMal) prices.push({ unit: '말', price: riceCake.pricePerMal });
+    if (riceCake.pricePerPiece) prices.push({ unit: '개', price: riceCake.pricePerPiece });
+    if (riceCake.pricePerPack) prices.push({ unit: '팩', price: riceCake.pricePerPack });
+    return prices;
+  };
+
   if (isLoading) return <div className="page-container">로딩 중...</div>;
   if (error) return <div className="page-container">오류: {error}</div>;
   if (!riceCake) return <div className="page-container">떡 정보를 찾을 수 없습니다.</div>;
+
+  const unitPrices = getUnitPrices(riceCake);
 
   return (
       <div className="page-container detail-page">
@@ -70,8 +82,21 @@ const RiceCakeDetailPage = () => {
           <div className="info-area">
             <div className="info-card">
               <h3>{riceCake.name}</h3>
-              <p><strong>가격:</strong> {riceCake.price.toLocaleString()}원</p>
-              <p><strong>단위:</strong> {riceCake.unit}</p>
+              <div className="price-info">
+                <h4>단위별 가격</h4>
+                {unitPrices.length > 0 ? (
+                  <div className="unit-prices-list">
+                    {unitPrices.map((unitPrice, index) => (
+                      <div key={index} className="unit-price-item">
+                        <span className="unit">{unitPrice.unit}</span>
+                        <span className="price">{unitPrice.price.toLocaleString()}원</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-price">가격 정보가 없습니다.</p>
+                )}
+              </div>
             </div>
             <div className="action-buttons">
               <Link to={`/rice-cakes/${riceCake.id}/edit`} className="edit-button">정보 수정</Link>

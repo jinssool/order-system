@@ -29,7 +29,9 @@ const OrderCard = ({ order }: OrderCardProps) => {
                 <p className="rice-cake-info">
                     {firstItem.productName}
                     {/* items가 존재하는지 확인 후 길이를 체크합니다. */}
-                    {order.products && order.products.length > 1 && ` 외 ${order.products.length - 1}건`}
+                    {order.products && order.products.length > 1 && (
+                        <span> 외 {order.products.length - 1}건</span>
+                    )}
                 </p>
             </div>
             <div className="card-right">

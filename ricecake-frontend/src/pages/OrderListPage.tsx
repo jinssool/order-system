@@ -105,7 +105,16 @@ const OrderListPage = () => {
       const dateString = getYYYYMMDD(date);
       const count = ordersByDate[dateString];
       if (count > 0) {
-        const intensity = count >= 5 ? 'high' : count >= 2 ? 'medium' : 'low';
+        let intensity = 'low';
+        if (count >= 19) {
+          intensity = 'extreme';
+        } else if (count >= 13) {
+          intensity = 'very-high';
+        } else if (count >= 8) {
+          intensity = 'high';
+        } else if (count >= 4) {
+          intensity = 'medium';
+        }
         return <div className={`order-dot ${intensity}`}></div>;
       }
     }
@@ -138,6 +147,7 @@ const OrderListPage = () => {
                   formatDay={(_, date) => date.getDate().toString()}
                   tileContent={renderTileContent}
                   locale="ko"
+                  calendarType="hebrew"
                   formatMonthYear={formatMonthYear}
                   formatShortWeekday={formatShortWeekday}
               />
@@ -170,7 +180,7 @@ const OrderListPage = () => {
           <div className="order-list-content">
             {sortedAndFilteredOrders.length > 0 ? (
                 sortedAndFilteredOrders.map(order => (
-                    <Link to={`/orders/${order.orderId}`} state={{ customerData: { name: order.customerName } }}>
+                    <Link key={order.orderId} to={`/orders/${order.orderId}`} state={{ customerData: { name: order.customerName } }}>
                       <OrderCard order={order} />
                     </Link>
                 ))

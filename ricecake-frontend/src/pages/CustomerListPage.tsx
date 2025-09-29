@@ -78,7 +78,7 @@ const CustomerListPage = () => {
               className={!selectedConsonant ? 'active' : ''}
               onClick={() => setSelectedConsonant(null)}
           >
-            전체
+            All
           </button>
           {CONSONANTS.map(c => (
               <button

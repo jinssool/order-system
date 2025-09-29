@@ -4,10 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-// Providers
-import { OrdersProvider } from './contexts/OrdersContext';
-import { CustomersProvider } from './contexts/CustomersContext';
-import { RiceCakesProvider } from './contexts/RiceCakesContext';
+// Providers removed - using API calls directly
 
 // Main App Component & Global CSS
 import App from './App';
@@ -27,7 +24,8 @@ import RiceCakeCreatePage from './pages/RiceCakeCreatePage';
 import RiceCakeEditPage from './pages/RiceCakeEditPage';
 import CustomerDetailPage from './pages/CustomerDetailPage';
 import RiceCakeDetailPage from './pages/RiceCakeDetailPage';
-import StatisticsPage from './pages/StatisticsPage';
+import ProductionPage from './pages/ProductionPage';
+import ProductionOrdersPage from './pages/ProductionOrdersPage';
 
 // ✅ PWA Service Worker Registration
 // 모든 컴포넌트가 렌더링되기 전에 등록하는 것이 올바른 순서입니다.
@@ -69,20 +67,15 @@ const router = createBrowserRouter([
       { path: "rice-cakes/:cakeId", element: <RiceCakeDetailPage /> },
       { path: "rice-cakes/:cakeId/edit", element: <RiceCakeEditPage /> },
 
-      { path: "stats", element: <StatisticsPage /> },
+      { path: "production", element: <ProductionPage /> },
+      { path: "production/orders", element: <ProductionOrdersPage /> },
     ]
   }
 ]);
 
-// ✅ 단일 진입점: 모든 Providers가 라우터를 감싸는 올바른 구조입니다.
+// ✅ 단일 진입점: API 호출을 직접 사용하는 구조
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <CustomersProvider>
-        <RiceCakesProvider>
-          <OrdersProvider>
-            <RouterProvider router={router} />
-          </OrdersProvider>
-        </RiceCakesProvider>
-      </CustomersProvider>
+      <RouterProvider router={router} />
     </React.StrictMode>,
 );

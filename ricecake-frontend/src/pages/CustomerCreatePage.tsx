@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useCustomers } from '../contexts/CustomersContext';
 import './FormPage.css';
 
 const CustomerCreatePage = () => {
     const navigate = useNavigate();
-    const { dispatch } = useCustomers();
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [memo, setMemo] = useState('');
@@ -25,17 +23,8 @@ const CustomerCreatePage = () => {
             });
 
             if (!res.ok) throw new Error('서버 오류');
-            const newCustomer = await res.json();
-
-            dispatch({
-                type: 'ADD_CUSTOMER',
-                payload: {
-                    name: newCustomer.name,
-                    phone: newCustomer.phoneNumber,
-                    memo: newCustomer.memo,
-                },
-            });
-
+            
+            alert('고객이 성공적으로 등록되었습니다.');
             navigate('/customers');
         } catch (err) {
             console.error(err);

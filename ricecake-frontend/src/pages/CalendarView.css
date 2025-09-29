@@ -21,8 +21,43 @@
   padding-top: 5px;
 }
 
+/* 달력 하단 버튼 숨기기 */
+.react-calendar__navigation__label__labelText--from {
+  display: none;
+}
+
+.react-calendar__navigation__arrow {
+  display: none;
+}
+
+.react-calendar__navigation__label {
+  display: none;
+}
+
+/* 달력 하단의 삭제/오늘 버튼 숨기기 */
 .react-calendar__tile--now {
   background-color: #e6f7ff;
+}
+
+/* 달력 하단 버튼들 완전히 숨기기 */
+.react-calendar__navigation__prev2-button,
+.react-calendar__navigation__next2-button,
+.react-calendar__navigation__prev-button,
+.react-calendar__navigation__next-button,
+.react-calendar__navigation__label {
+  display: none !important;
+}
+
+/* 달력 하단의 모든 버튼 숨기기 */
+.react-calendar__navigation {
+  display: none !important;
+}
+
+/* 달력 하단의 삭제 버튼 숨기기 */
+button[aria-label*="삭제"],
+button[aria-label*="Delete"],
+.react-calendar__navigation button:last-child {
+  display: none !important;
 }
 
 .react-calendar__tile--active,
@@ -32,26 +67,33 @@
   color: white;
 }
 
-/* --- 이 부분의 스타일을 수정합니다 --- */
+/* 주문 개수별 색상 변경 - 연초록-초록-노랑-주황-빨강 */
 .order-dot {
   height: 8px;
   width: 8px;
   border-radius: 50%;
   margin-top: 8px;
 }
-/* 주문 1건: 옅은 초록색 */
+/* 주문 0-3건: 연초록 */
 .order-dot.low {
-  background-color: #20c997;
+  background-color: #90EE90;
 }
-/* 주문 2-4건: 옅은 주황색 */
+/* 주문 4-7건: 초록 */
 .order-dot.medium {
-  background-color: #aea802;
+  background-color: #32CD32;
 }
-/* 주문 5건 이상: 짙은 빨간색 */
+/* 주문 8-12건: 노랑 */
 .order-dot.high {
-  background-color: #fa5252;
+  background-color: #FFD700;
 }
-/* ---------------------------------- */
+/* 주문 13-18건: 주황 */
+.order-dot.very-high {
+  background-color: #FFA500;
+}
+/* 주문 19건 이상: 빨강 */
+.order-dot.extreme {
+  background-color: #FF4500;
+}
 
 
 .react-calendar__tile--active .order-dot {
@@ -63,4 +105,70 @@
   font-weight: 600;
   text-decoration: none;
   color: #333;
+}
+
+/* 달력을 일요일부터 시작하도록 설정 */
+.react-calendar__month-view__weekdays {
+  display: flex;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  flex: 1;
+  text-align: center;
+}
+
+/* 요일 순서를 일요일부터로 변경 및 색상 설정 */
+.react-calendar__month-view__weekdays__weekday:nth-child(1) {
+  order: 1; /* 일요일 */
+  color: #dc3545; /* 일요일 빨간색 */
+}
+
+.react-calendar__month-view__weekdays__weekday:nth-child(2) {
+  order: 2; /* 월요일 */
+}
+
+.react-calendar__month-view__weekdays__weekday:nth-child(3) {
+  order: 3; /* 화요일 */
+}
+
+.react-calendar__month-view__weekdays__weekday:nth-child(4) {
+  order: 4; /* 수요일 */
+}
+
+.react-calendar__month-view__weekdays__weekday:nth-child(5) {
+order: 5; /* 목요일 */
+}
+
+.react-calendar__month-view__weekdays__weekday:nth-child(6) {
+  order: 6; /* 금요일 */
+  color: #343a40; /* 금요일 검정색 */
+}
+
+.react-calendar__month-view__weekdays__weekday:nth-child(7) {
+  order: 7; /* 토요일 */
+  color: #dc3545; /* 토요일 빨간색 */
+}
+
+/* 달력 날짜도 일요일부터 시작하도록 설정 */
+.react-calendar__month-view__days {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.react-calendar__month-view__days__day {
+  flex: 0 0 calc(100% / 7);
+  text-align: center;
+}
+
+/* 달력 날짜에서 일요일과 토요일을 빨간색으로, 금요일은 검정색으로 */
+.react-calendar__month-view__days__day:nth-child(7n+1) {
+  color: #dc3545; /* 일요일 */
+}
+
+.react-calendar__month-view__days__day:nth-child(7n+6) {
+  color: #343a40; /* 금요일 검정색 */
+}
+
+.react-calendar__month-view__days__day:nth-child(7n) {
+  color: #dc3545; /* 토요일 */
 }

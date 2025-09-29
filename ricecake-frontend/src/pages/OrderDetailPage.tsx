@@ -109,6 +109,21 @@ const OrderDetailPage = () => {
     return <div className="page-container">주문 정보를 찾을 수 없습니다.</div>;
   }
 
+  const formatPickupDate = (pickupDate: string) => {
+    try {
+      const date = new Date(pickupDate);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+    } catch (error) {
+      return pickupDate; // 파싱 실패 시 원본 반환
+    }
+  };
+
   const customerInfo = customerFromState || order.customer || {};
 
   return (
@@ -137,11 +152,24 @@ const OrderDetailPage = () => {
               <p>
                 <strong>주문 날짜:</strong> {order.createdAt?.substring(0, 10) || '정보 없음'}
               </p>
-              <p><strong>떡 종류:</strong> {order.orderTables?.[0]?.productName || '정보 없음'}</p>
+              <p><strong>떡 종류:</strong></p>
+              <div className="order-items-list">
+                {order.orderTables && order.orderTables.length > 0 
+                  ? order.orderTables.map((item: any, index: number) => (
+                      <div key={`${item.id || item.productId || index}-${item.productName || item.riceCakeName}`} className="order-item-detail">
+                        <span className="item-name">{item.productName || item.riceCakeName || '정보 없음'}</span>
+                        <span className="item-quantity">{item.quantity}{item.productUnit || item.unit}</span>
+                        <span className={`rice-status ${item.hasRice ? 'has-rice' : 'no-rice'}`}>
+                          {item.hasRice ? '쌀지참' : '쌀없음'}
+                        </span>
+                      </div>
+                    ))
+                  : <p>정보 없음</p>
+                }
+              </div>
               <p><strong>총액:</strong> {order.totalPrice?.toLocaleString() || '0'}원</p>
               <p><strong>메모:</strong> {order.memo || '없음'}</p>
-              <p><strong>픽업 날짜:</strong> {order.pickupDate}</p>
-              <p><strong>쌀 지참:</strong> {order.hasRice ? '예' : '아니오'}</p>
+              <p><strong>픽업 날짜:</strong> {formatPickupDate(order.pickupDate)}</p>
             </div>
           </div>
 
@@ -154,10 +182,6 @@ const OrderDetailPage = () => {
               <div className={`status-card ${order.isPickedUp ? 'delivered' : 'undelivered'}`}>
                 <span className="label">수령 상태</span>
                 <span className="value">{order.isPickedUp ? '수령 완료' : '미수령'}</span>
-              </div>
-              <div className={`status-card ${order.hasRice ? 'rice-ok' : 'rice-no'}`}>
-                <span className="label">쌀 지참</span>
-                <span className="value">{order.hasRice ? '쌀 있음' : '쌀 없음'}</span>
               </div>
             </div>
             <div className="action-buttons-group">

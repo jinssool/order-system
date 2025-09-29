@@ -5,7 +5,7 @@
 .header-left h2 { margin: 0; }
 .search-input { padding: 8px 12px; font-size: 1em; border-radius: 8px; border: 1px solid #ced4da; width: 250px; }
 .consonant-filter { display: flex; justify-content: center; gap: 8px; padding: 16px 24px; background-color: #f8f9fa; flex-shrink: 0; border-bottom: 1px solid #e9ecef; }
-.consonant-filter button { font-size: 1em; font-weight: bold; border: 1px solid #dee2e6; background: white; color: #868e96; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: all 0.2s; }
+.consonant-filter button { font-size: 0.8em; font-weight: bold; border: 1px solid #dee2e6; background: white; color: #868e96; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: all 0.2s; }
 .consonant-filter button:hover { background: #e9ecef; }
 .consonant-filter button.active { background: #007bff; color: white; border-color: #007bff; }
 .list-container.scrollable { flex-grow: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }

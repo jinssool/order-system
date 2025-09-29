@@ -1,6 +1,6 @@
 // src/pages/OrderEditPage.tsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import type { Unit } from '../types';
 import './FormPage.css';
 
@@ -26,7 +26,7 @@ const OrderEditPage = () => {
   const [pickupDate, setPickupDate] = useState('');
   const [pickupHour, setPickupHour] = useState('00');
   const [pickupMinute, setPickupMinute] = useState('00');
-  const [hasRice, setHasRice] = useState(true);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const OrderEditPage = () => {
         setPickupDate(data.pickupDate?.substring(0, 10) || '');
         setPickupHour(data.pickupDate ? String(new Date(data.pickupDate).getHours()).padStart(2, '0') : '00');
         setPickupMinute(data.pickupDate ? String(new Date(data.pickupDate).getMinutes()).padStart(2, '0') : '00');
-        setHasRice(data.hasRice);
+        setOrderItems(data.orderTables || []);
         setMemo(data.memo || '');
         setTotalPrice(data.totalPrice || 0);
       } catch (e: any) {
@@ -71,6 +71,12 @@ const OrderEditPage = () => {
     setTotalPrice(Number(e.target.value));
   };
 
+  const handleItemRiceChange = (index: number, hasRice: boolean) => {
+    const updatedItems = [...orderItems];
+    updatedItems[index] = { ...updatedItems[index], hasRice };
+    setOrderItems(updatedItems);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!order) {
@@ -78,7 +84,7 @@ const OrderEditPage = () => {
       return;
     }
 
-    const customerId = customerFromState?.id || order.customer?.id;
+    const customerId = order.customerId || order.customer?.id || customerFromState?.id;
     if (!customerId) {
       alert('고객 정보가 누락되어 주문을 수정할 수 없습니다.');
       return;
@@ -87,11 +93,12 @@ const OrderEditPage = () => {
     const formattedPickupDate = `${pickupDate}T${pickupHour}:${pickupMinute}:00`;
 
     try {
-      const orderTablesPayload = order.orderTables.map((table: any) => ({
+      const orderTablesPayload = orderItems.map((table: any) => ({
         ...table,
         productId: table.id,
-        quantity: quantity,
-        unit: unit
+        quantity: table.quantity,
+        unit: table.productUnit || table.unit,
+        hasRice: table.hasRice
       }));
 
       const updatedOrderData = {
@@ -99,7 +106,6 @@ const OrderEditPage = () => {
         memo,
         customerId: customerId,
         pickupDate: formattedPickupDate,
-        hasRice,
         finalPrice: totalPrice,
         orderTables: orderTablesPayload,
       };
@@ -145,9 +151,34 @@ const OrderEditPage = () => {
           <label>고객명</label>
           <p>{customerInfo.name || '정보 없음'}</p>
         </div>
-        <div className="form-group readonly">
-          <label>떡 종류</label>
-          <p>{order.orderTables?.[0]?.productName || '정보 없음'}</p>
+        <div className="form-group">
+          <label>떡 종류 및 쌀지참여부</label>
+          <div className="order-items-edit">
+            {orderItems.map((item: any, index: number) => (
+              <div key={`${item.id || item.productId || index}-${item.productName}`} className="order-item-edit">
+                <div className="item-info">
+                  <span className="item-name">{item.productName || '정보 없음'}</span>
+                  <span className="item-quantity">{item.quantity}{item.productUnit || item.unit}</span>
+                </div>
+                <div className="rice-toggle">
+                  <button 
+                    type="button" 
+                    className={item.hasRice ? 'active' : ''} 
+                    onClick={() => handleItemRiceChange(index, true)}
+                  >
+                    쌀 있음
+                  </button>
+                  <button 
+                    type="button" 
+                    className={!item.hasRice ? 'active' : ''} 
+                    onClick={() => handleItemRiceChange(index, false)}
+                  >
+                    쌀 없음
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="form-group quantity-group">
           <div className="quantity-input">
@@ -182,15 +213,8 @@ const OrderEditPage = () => {
             </select>
           </div>
         </div>
-        <div className="form-group">
-          <label>쌀 지참 여부</label>
-          <div className="toggle-buttons">
-            <button type="button" className={hasRice ? 'active' : ''} onClick={() => setHasRice(true)}>쌀 있음</button>
-            <button type="button" className={!hasRice ? 'active' : ''} onClick={() => setHasRice(false)}>쌀 없음</button>
-          </div>
-        </div>
         <div className="form-actions">
-          <Link to={`/orders/${order.orderId}`} className="cancel-button">취소</Link>
+          <button type="button" onClick={() => navigate(`/orders/${order.orderId}`, { state: { customerData: customerFromState } })} className="cancel-button">취소</button>
           <button type="submit" className="submit-button">수정 완료</button>
         </div>
       </form>

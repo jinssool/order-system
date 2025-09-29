@@ -1,13 +1,13 @@
 // src/pages/NewOrderPage.tsx
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 추가
-import { useOrders } from '../contexts/OrdersContext'; // 중앙 저장소의 dispatch 함수를 가져오기 위함
-import type { Unit } from '../types'; // Unit 타입을 가져옴
+import { Link, useNavigate } from 'react-router-dom';
+import type { Unit } from '../types';
 import './NewOrderPage.css';
 
+const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
+
 const NewOrderPage = () => {
-  const navigate = useNavigate(); // 페이지 이동 함수
-  const { dispatch } = useOrders(); // 중앙 저장소에 명령을 내릴 dispatch 함수
+  const navigate = useNavigate();
 
   // 폼 필드들의 상태를 관리합니다.
   const [customerName, setCustomerName] = useState('');
@@ -18,8 +18,8 @@ const NewOrderPage = () => {
   const [pickupDate, setPickupDate] = useState('');
 
   // '저장' 버튼을 눌렀을 때 실행될 함수
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // 폼의 기본 제출 동작(새로고침)을 막습니다.
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     // 필수 값들이 입력되었는지 간단히 확인합니다.
     if (!customerName || !pickupDate) {
@@ -27,23 +27,37 @@ const NewOrderPage = () => {
       return;
     }
 
-    // 중앙 저장소로 보낼 새 주문 객체를 만듭니다.
-    const newOrder = {
-      customerName,
-      riceCakeType,
-      quantity,
-      unit,
-      hasRice,
-      pickupDate,
-      isPaid: false,      // 새 주문은 기본적으로 '미결제'
-      isDelivered: false, // '미수령' 상태입니다.
-    };
+    try {
+      // API로 주문 생성
+      const newOrder = {
+        customerName,
+        orderTable: [{
+          riceCakeName: riceCakeType,
+          quantity,
+          unit,
+          hasRice
+        }],
+        pickupDate,
+        pickupTime: '09:00',
+        isPaid: false,
+        isPickedUp: false,
+        hasRice: hasRice
+      };
 
-    // 중앙 저장소의 reducer에게 'ADD_ORDER' 명령과 데이터를 보냅니다.
-    dispatch({ type: 'ADD_ORDER', payload: newOrder });
+      const res = await fetch(ORDERS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrder),
+      });
 
-    alert('새로운 주문이 추가되었습니다.');
-    navigate('/'); // 주문 추가 후 메인 페이지로 이동합니다.
+      if (!res.ok) throw new Error('서버 오류');
+
+      alert('새로운 주문이 추가되었습니다.');
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      alert('주문 등록 실패');
+    }
   };
 
   return (

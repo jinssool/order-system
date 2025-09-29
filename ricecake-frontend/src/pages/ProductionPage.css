@@ -1,0 +1,275 @@
+/* src/pages/ProductionPage.css */
+.production-page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 2.2em;
+  color: #495057;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.current-date-display {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #495057;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+/* 제작현황 페이지 전용 달력 스타일 */
+.production-page .date-input {
+  font-size: 1.2em;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.production-page .date-input:hover {
+  border-color: #007bff;
+}
+
+.production-page .date-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* 제작현황 페이지에서 달력 팝업의 삭제 버튼 숨기기 */
+.production-page input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* 달력 팝업 내부의 모든 버튼 숨기기 */
+.production-page input[type="date"]::-webkit-datetime-edit-text,
+.production-page input[type="date"]::-webkit-datetime-edit-month-field,
+.production-page input[type="date"]::-webkit-datetime-edit-day-field,
+.production-page input[type="date"]::-webkit-datetime-edit-year-field {
+  display: none;
+}
+
+/* 달력 팝업에서 삭제 버튼 완전히 숨기기 */
+.production-page input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background: none;
+}
+
+/* 달력 팝업 내부의 모든 버튼과 컨트롤 숨기기 */
+.production-page input[type="date"]::-webkit-datetime-edit {
+  display: none;
+}
+
+/* 달력 팝업에서 삭제 버튼과 기타 컨트롤 숨기기 */
+.production-page input[type="date"]::-webkit-inner-spin-button,
+.production-page input[type="date"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 달력 팝업에서 모든 버튼 숨기기 */
+.production-page input[type="date"]::-webkit-clear-button {
+  display: none;
+  -webkit-appearance: none;
+}
+
+.production-content {
+  min-height: 400px;
+}
+
+/* 정렬 컨트롤 */
+.production-controls {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-controls span {
+  font-weight: 600;
+  color: #495057;
+}
+
+.sort-controls button {
+  padding: 8px 16px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background: white;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-controls button:hover {
+  background: #f8f9fa;
+}
+
+.sort-controls button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* 주문 리스트와 비슷한 스타일로 변경 */
+.production-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 제작현황을 메인 주문 리스트와 동일한 스타일로 변경 */
+.production-item {
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.production-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-color: #007bff;
+}
+
+.item-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-header h3 {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin: 0;
+  color: #343a40;
+}
+
+.item-header .rice-badge {
+  align-self: flex-start;
+}
+
+.customer-name {
+  font-size: 0.9em;
+  color: #6c757d;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.item-quantity {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.item-quantity .quantity {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin: 0;
+  color: #007bff;
+  margin-right: 8px;
+}
+
+.item-quantity .unit {
+  font-size: 1.2em;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.item-quantity .quantity-breakdown {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #007bff;
+  text-align: left;
+}
+
+.item-orders {
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.rice-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.rice-badge.has-rice {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.rice-badge.no-rice {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #868e96;
+}
+
+.empty-state p {
+  font-size: 1.3em;
+  margin: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .production-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quantity {
+    font-size: 2.5em;
+  }
+}
