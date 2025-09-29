@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f2ce2ec4-5908-4354-b394-00c5b460524e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step2RiceCake.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step2RiceCake.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step3Confirm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step3Confirm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderListPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderListPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +69,8 @@
       <workItem from="1758180828811" duration="1700000" />
       <workItem from="1758186228885" duration="14866000" />
       <workItem from="1758511375561" duration="8567000" />
+      <workItem from="1758528189970" duration="7164000" />
+      <workItem from="1758979392357" duration="10180000" />
     </task>
     <servers />
   </component>

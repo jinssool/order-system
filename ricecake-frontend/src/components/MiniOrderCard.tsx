@@ -7,10 +7,10 @@ interface MiniOrderCardProps {
 }
 
 const MiniOrderCard = ({ order }: MiniOrderCardProps) => {
-  const firstItem = order.items[0];
-  const itemSummary = order.items.length > 1 
-    ? `${firstItem.riceCakeName} 외 ${order.items.length - 1}건` 
-    : firstItem.riceCakeName;
+  const firstItem = order.orderTables[0];
+  const itemSummary = order.orderTables.length > 1
+    ? `${firstItem.productName} 외 ${order.orderTables.length - 1}건`
+    : firstItem.productName;
 
   return (
     <div className="mini-order-card">

@@ -16,8 +16,8 @@ export interface RiceCakeType {
 }
 
 export interface OrderItem {
-  riceCakeId: number;
-  riceCakeName: string;
+  productId: number;
+  productName: string;
   quantity: number;
   unit: Unit;
   hasRice: boolean; // 쌀 지참 여부를 품목별로 관리
@@ -25,9 +25,11 @@ export interface OrderItem {
 
 export interface Order {
   id: number;
+  finalPrice: number;
+  memo: string;
   customerId: number;
   customerName?: string;
-  orderTable: OrderItem[];
+  orderTables: OrderItem[];
   pickupDate: string;
   pickupTime: string;
   isPaid: boolean;

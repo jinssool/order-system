@@ -15,6 +15,7 @@ const OrderDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const customerFromState = location.state?.customerData;
+  console.log(customerFromState);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -122,7 +123,7 @@ const OrderDetailPage = () => {
               <h2>고객 정보</h2>
               <p>
                 <strong>고객명:</strong>
-                {customerInfo.id ? (
+                {customerInfo.name ? (
                     <Link to={`/customers/${customerInfo.id}`} style={{textDecoration: 'underline', marginLeft: '5px'}}>
                       {customerInfo.name}
                     </Link>
@@ -136,7 +137,7 @@ const OrderDetailPage = () => {
               <p>
                 <strong>주문 날짜:</strong> {order.createdAt?.substring(0, 10) || '정보 없음'}
               </p>
-              <p><strong>떡 종류:</strong> {order.orderTable?.[0]?.productName || '정보 없음'}</p>
+              <p><strong>떡 종류:</strong> {order.orderTables?.[0]?.productName || '정보 없음'}</p>
               <p><strong>총액:</strong> {order.totalPrice?.toLocaleString() || '0'}원</p>
               <p><strong>메모:</strong> {order.memo || '없음'}</p>
               <p><strong>픽업 날짜:</strong> {order.pickupDate}</p>

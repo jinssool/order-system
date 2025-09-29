@@ -10,9 +10,9 @@ interface OrderCardProps {
 
 const OrderCard = ({ order }: OrderCardProps) => {
     // order.items가 존재하는지 먼저 확인하고, 첫 번째 요소를 가져옵니다.
-    const firstItem = order.items?.[0];
+    const firstItem = order.products?.[0];
     // order.items가 존재하는지 먼저 확인하고, some 메서드를 호출합니다.
-    const hasRiceInAnyItem = order.items?.some(item => item.hasRice);
+    const hasRiceInAnyItem = order.products?.some(item => item.hasRice);
 
     // 아이템이 없는 주문이라면 null을 반환하여 렌더링하지 않습니다.
     if (!firstItem) {
@@ -27,9 +27,9 @@ const OrderCard = ({ order }: OrderCardProps) => {
             </div>
             <div className="card-middle">
                 <p className="rice-cake-info">
-                    {firstItem.riceCakeName}
+                    {firstItem.productName}
                     {/* items가 존재하는지 확인 후 길이를 체크합니다. */}
-                    {order.items && order.items.length > 1 && ` 외 ${order.items.length - 1}건`}
+                    {order.products && order.products.length > 1 && ` 외 ${order.products.length - 1}건`}
                 </p>
             </div>
             <div className="card-right">
