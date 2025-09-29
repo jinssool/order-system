@@ -1,50 +1,59 @@
-/* src/pages/CalendarView.css */
-.calendar-container {
+/* src/pages/ProductionCalendarView.css - 생산계획 페이지 전용 캘린더 스타일 */
+
+/* 생산계획 페이지의 캘린더 컨테이너만 적용 */
+.production-page .calendar-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
   background: white;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  width: 300px;
+  height: 280px; /* 생산계획은 더 작은 크기 */
 }
 
-.react-calendar {
+/* 생산계획 페이지의 캘린더만 적용 */
+.production-page .react-calendar {
   width: 100%;
+  height: 100%;
   border: none;
   background: white;
   font-family: inherit;
   display: block !important;
   visibility: visible !important;
+  font-size: 0.9em; /* 더 작은 폰트 */
 }
 
-.react-calendar__tile {
-  height: 60px;
-  font-size: 1.1em;
+/* 생산계획 캘린더 타일 - 더 작은 크기 */
+.production-page .react-calendar__tile {
+  height: 35px !important; /* 메인화면보다 더 작은 타일 */
+  font-size: 0.85em !important;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 5px;
+  justify-content: center;
+  padding: 2px;
 }
 
-/* 달력 하단의 삭제/오늘 버튼 숨기기 */
-.react-calendar__tile--now {
-  background-color: #e6f7ff;
-}
-
-/* 달력 네비게이션 표시 */
+/* 생산계획 캘린더 네비게이션 표시 */
 .react-calendar__navigation {
   display: flex !important;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  height: 35px;
 }
 
 .react-calendar__navigation button {
   display: block !important;
   background: none;
   border: none;
-  font-size: 1.2em;
+  font-size: 1em;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
   transition: background-color 0.2s;
 }
@@ -55,14 +64,14 @@
 
 .react-calendar__navigation__label {
   display: block !important;
-  font-size: 1.3em;
+  font-size: 1.1em;
   font-weight: bold;
   color: #333;
 }
 
 .react-calendar__navigation__arrow {
   display: block !important;
-  font-size: 1.5em;
+  font-size: 1.2em;
   color: #007bff;
 }
 
@@ -71,7 +80,7 @@
   display: block !important;
 }
 
-/* 달력 하단의 삭제 버튼만 숨기기 */
+/* 삭제 버튼과 연도 단위 이동 버튼만 숨기기 */
 button[aria-label*="삭제"],
 button[aria-label*="Delete"],
 .react-calendar__navigation__prev2-button,
@@ -86,41 +95,8 @@ button[aria-label*="Delete"],
   color: white;
 }
 
-/* 주문 개수별 색상 변경 - 연초록-초록-노랑-주황-빨강 */
-.order-dot {
-  height: 8px;
-  width: 8px;
-  border-radius: 50%;
-  margin-top: 8px;
-}
-/* 주문 0-3건: 연초록 */
-.order-dot.low {
-  background-color: #90EE90;
-}
-/* 주문 4-7건: 초록 */
-.order-dot.medium {
-  background-color: #32CD32;
-}
-/* 주문 8-12건: 노랑 */
-.order-dot.high {
-  background-color: #FFD700;
-}
-/* 주문 13-18건: 주황 */
-.order-dot.very-high {
-  background-color: #FFA500;
-}
-/* 주문 19건 이상: 빨강 */
-.order-dot.extreme {
-  background-color: #FF4500;
-}
-
-
-.react-calendar__tile--active .order-dot {
-  background-color: white;
-}
-
 .react-calendar__month-view__weekdays abbr {
-  font-size: 1.1em;
+  font-size: 0.9em;
   font-weight: 600;
   text-decoration: none;
   color: #333;
@@ -155,7 +131,7 @@ button[aria-label*="Delete"],
 }
 
 .react-calendar__month-view__weekdays__weekday:nth-child(5) {
-order: 5; /* 목요일 */
+  order: 5; /* 목요일 */
 }
 
 .react-calendar__month-view__weekdays__weekday:nth-child(6) {

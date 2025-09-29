@@ -8,7 +8,7 @@
   display: flex;
   gap: 24px;
   margin-bottom: 24px;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .calendar-area {
@@ -16,6 +16,7 @@
   min-width: 400px;
   display: flex;
   flex-direction: column;
+  height: 500px; /* 높이를 450px에서 500px로 증가 */
 }
 
 .stats-area {
@@ -51,9 +52,10 @@
 }
 
 .calendar-container {
-  flex-grow: 1;
+  flex: 1; /* 남은 공간을 모두 사용 */
+  overflow: hidden;
+  flex-shrink: 0;
 }
-.calendar-container .react-calendar { width: 100%; height: 100%; border: none; }
 
 .order-list-area {
   padding: 24px;

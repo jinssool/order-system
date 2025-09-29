@@ -127,3 +127,89 @@
   padding: 40px;
 }
 
+/* 새로운 주문 아이템 스타일 */
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.order-item:hover {
+  background: #e9ecef;
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customer-name {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.tteok-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tteok-name {
+  font-size: 1em;
+  color: #495057;
+}
+
+.tteok-quantity {
+  font-size: 1em;
+  font-weight: bold;
+  color: #007bff;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+}
+
+.order-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.status-badge.paid {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.unpaid {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.picked-up {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.not-picked-up {
+  background-color: #fff3cd;
+  color: #856404;
+}
+

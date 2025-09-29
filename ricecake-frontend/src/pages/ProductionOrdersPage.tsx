@@ -35,6 +35,9 @@ const ProductionOrdersPage = () => {
       setError(null);
       
       try {
+        console.log('ProductionOrdersPage state:', state);
+        console.log('orderIds:', state.orderIds);
+        
         const response = await fetch(`${ORDERS_API_URL}?page=0&size=1000`);
         if (!response.ok) {
           throw new Error('주문 목록을 불러오는 데 실패했습니다.');
@@ -43,10 +46,14 @@ const ProductionOrdersPage = () => {
         const data = await response.json();
         const allOrders = data.content || [];
         
+        console.log('All orders:', allOrders);
+        
         // 특정 주문 ID들만 필터링
         const filteredOrders = allOrders.filter((order: any) => 
           state.orderIds.includes(order.orderId)
         );
+        
+        console.log('Filtered orders:', filteredOrders);
         
         setOrders(filteredOrders);
       } catch (e: any) {
@@ -105,9 +112,40 @@ const ProductionOrdersPage = () => {
         <h3>관련 주문 목록 ({orders.length}건)</h3>
         <div className="orders-list">
           {orders.length > 0 ? (
-            orders.map((order) => (
-              <OrderCard key={order.orderId} order={order} />
-            ))
+            orders.map((order) => {
+              // 해당 떡의 수량 찾기
+              const tteokItem = order.products?.find((product: any) => 
+                product.productName === state.riceCakeName && 
+                product.hasRice === state.hasRice
+              );
+              
+              return (
+                <div 
+                  key={order.orderId} 
+                  className="order-item"
+                  onClick={() => navigate(`/orders/${order.orderId}`)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="order-info">
+                    <div className="customer-name">{order.customerName}</div>
+                    <div className="tteok-details">
+                      <span className="tteok-name">{state.riceCakeName}</span>
+                      <span className="tteok-quantity">
+                        {tteokItem ? `${tteokItem.quantity}${tteokItem.unit || tteokItem.productUnit || 'kg'}` : '수량 정보 없음'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="order-status">
+                    <span className={`status-badge ${order.paymentStatus === 'PAID' ? 'paid' : 'unpaid'}`}>
+                      {order.paymentStatus === 'PAID' ? '결제완료' : '미결제'}
+                    </span>
+                    <span className={`status-badge ${order.pickupStatus === 'PICKED_UP' ? 'picked-up' : 'not-picked-up'}`}>
+                      {order.pickupStatus === 'PICKED_UP' ? '수령완료' : '미수령'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })
           ) : (
             <p className="empty-message">관련 주문이 없습니다.</p>
           )}

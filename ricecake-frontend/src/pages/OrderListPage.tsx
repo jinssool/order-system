@@ -8,7 +8,7 @@ import OrderCard from '../components/OrderCard';
 import DailyStats from '../components/DailyStats';
 import { getYYYYMMDD } from '../utils/dateUtils';
 import './OrderListPage.css';
-import './CalendarView.css';
+import './MainCalendarView.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 

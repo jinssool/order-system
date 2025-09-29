@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './ProductionPage.css';
+import './ProductionCalendarView.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 
@@ -143,7 +144,8 @@ const ProductionPage = () => {
               .join(' + ');
             
             existing.unitBreakdown = unitEntries;
-            existing.totalQuantity = 0; // unitBreakdown 사용 시 totalQuantity는 무시
+            // totalQuantity는 unitQuantities의 모든 값의 합으로 계산
+            existing.totalQuantity = Array.from(existing.unitQuantities.values()).reduce((sum, qty) => sum + qty, 0);
           } else {
             itemMap.set(key, {
               riceCakeName: riceCakeName,
