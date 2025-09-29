@@ -16,7 +16,7 @@ const CustomerCreatePage = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:8080/api-v1/customers', {
+            const res = await fetch('https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phoneNumber: phone, memo }),

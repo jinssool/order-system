@@ -22,7 +22,7 @@ const CustomerDetailPage = () => {
 
       try {
         // 고객 정보 API 호출
-        const customerRes = await fetch(`http://localhost:8080/api-v1/customers/${customerId}`);
+        const customerRes = await fetch(`https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers/${customerId}`);
         if (!customerRes.ok) {
           throw new Error('고객 정보를 불러오는 데 실패했습니다.');
         }
@@ -34,7 +34,7 @@ const CustomerDetailPage = () => {
         params.append('size', '50');
         params.append('sort', 'orderDate');
         // 고객의 주문 내역 API 호출
-        const url = `http://localhost:8080/api-v1/orders/by-customer/${customerId}?${params.toString()}`;
+        const url = `https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/orders/by-customer/${customerId}?${params.toString()}`;
         const ordersRes = await fetch(url, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
@@ -77,7 +77,7 @@ const CustomerDetailPage = () => {
     if (!customer || !customerId) return;
     if (window.confirm(`'${customer.name}' 고객 정보를 정말 삭제하시겠습니까?`)) {
       try {
-        const res = await fetch(`http://localhost:8080/api-v1/customers/${customerId}`, {
+        const res = await fetch(`https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers/${customerId}`, {
           method: 'DELETE',
         });
 
