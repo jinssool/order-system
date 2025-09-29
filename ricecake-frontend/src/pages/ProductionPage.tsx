@@ -86,8 +86,8 @@ const ProductionPage = () => {
       orderItems.forEach((item: any) => {
         // 백엔드 데이터 구조에 맞게 필드명 수정
         const riceCakeName = item.productName || item.riceCakeName;
-        // 백엔드에서 개별 제품에 hasRice 정보가 없으므로 주문 전체의 hasRice를 사용
-        const hasRice = (order as any).hasRice || false;
+        // 개별 제품의 hasRice 정보를 사용 (백엔드에서 제공하는 경우)
+        const hasRice = item.hasRice !== undefined ? item.hasRice : (order as any).hasRice || false;
         const quantity = item.quantity;
         const unit = item.unit || item.productUnit;
         
