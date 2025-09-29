@@ -12,7 +12,7 @@ import './NewOrderKiosk.css';
 const initialOrderState: Partial<Order> = {
   isPaid: false,
   isDelivered: false,
-  items: [], // items 배열을 명시적으로 초기화
+  orderTable: [],
 };
 
 const NewOrderKioskPage = () => {

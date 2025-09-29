@@ -11,7 +11,6 @@ const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 
 interface StepProps {
   orderData: Partial<Order>;
-  updateOrderData: (data: Partial<Order>) => void;
   goToPrevStep: () => void;
 }
 
@@ -27,7 +26,7 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
   const [pickupHour, setPickupHour] = useState('10');
   const [pickupMinute, setPickupMinute] = useState('00');
   const [hasRice, setHasRice] = useState(true);
-  const [memo, setMemo] = useState(orderData.memo || '');
+  const [memo, setMemo] = useState((orderData as any).memo || '');
 
   useEffect(() => {
     if (orderData.pickupDate) {
@@ -40,21 +39,25 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
     }
   }, [orderData]);
 
-  const finalPrice = orderData.finalPrice ?? 0;
-  const cartItems = orderData.orderTables || []; // 'orderTables'로 통일
+  const cartItems = (orderData as any).orderTable || [];
+  const finalPrice = cartItems.reduce((total: number, item: any) => {
+    const price = item.price ?? 0;
+    const quantity = item.quantity ?? 0;
+    return total + (price * quantity);
+  }, 0);
 
   const handleSaveOrder = async () => {
     const pickupDateTime = `${getYYYYMMDD(pickupDate)}T${pickupHour}:${pickupMinute}:00`;
 
     // 백엔드 API 스키마에 맞는 orderTables 배열을 생성합니다.
-    const orderTablesForApi = (cartItems || []).map(item => ({
+    const orderTablesForApi = (cartItems || []).map((item: any) => ({
       productId: item.productId, // 'riceCakpreId' 오타 수정
       quantity: item.quantity,
       unit: item.unit
     }));
 
     const finalOrderData = {
-      customerId: orderData.customerId,
+      customerId: (orderData as any).customerId,
       pickupDate: pickupDateTime,
       memo: memo,
       finalPrice: finalPrice,
@@ -107,9 +110,9 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
           </div>
           <div className="time-picker-wrapper">
             <div className="form-group">
-              <label>픽업 시간</label>
+              <label htmlFor="pickup-time">픽업 시간</label>
               <div className="time-selects">
-                <select value={pickupHour} onChange={e => setPickupHour(e.target.value)}>
+                <select id="pickup-time" value={pickupHour} onChange={e => setPickupHour(e.target.value)}>
                   {hours.map(h => <option key={h} value={h}>{h}시</option>)}
                 </select>
                 <select value={pickupMinute} onChange={e => setPickupMinute(e.target.value)}>

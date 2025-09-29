@@ -21,7 +21,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
   const [error, setError] = useState<string | null>(null);
 
   const [selectedConsonant, setSelectedConsonant] = useState<string | null>(null);
-  const cartItems = orderData.orderTables || [];
+  const cartItems = (orderData as any).orderTable || [];
 
   useEffect(() => {
     const fetchRiceCakes = async () => {
@@ -56,7 +56,7 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
   }, [riceCakes, selectedConsonant]);
 
   const addToCart = (cake: RiceCakeType) => {
-    if (cartItems.find(item => item.productId === cake.id)) {
+    if (cartItems.find((item: any) => item.productId === cake.id)) {
       alert("이미 장바구니에 있는 떡입니다."); return;
     }
     const newItem = {
@@ -67,25 +67,25 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
       hasRice: false,
       price: cake.price
     };
-    updateOrderData({ orderTables: [...cartItems, newItem] });
+    updateOrderData({ orderTable: [...cartItems, newItem] });
   };
 
   const updateItem = (productId: number, newValues: Partial<OrderItem>) => {
     if (newValues.quantity !== undefined && newValues.quantity < 1) return;
-    const newItems = cartItems.map(item =>
+    const newItems = cartItems.map((item: any) =>
         item.productId === productId ? { ...item, ...newValues } : item
     );
-    updateOrderData({ orderTables: newItems });
+    updateOrderData({ orderTable: newItems });
   };
 
   const handleSetAllRice = () => {
-    const newItems = cartItems.map(item => ({ ...item, hasRice: true }));
-    updateOrderData({ orderTables: newItems });
+    const newItems = cartItems.map((item: any) => ({ ...item, hasRice: true }));
+    updateOrderData({ orderTable: newItems });
   };
 
   const removeFromCart = (productId: number) => {
-    const newItems = cartItems.filter(item => item.productId !== productId);
-    updateOrderData({ orderTables: newItems });
+    const newItems = cartItems.filter((item: any) => item.productId !== productId);
+    updateOrderData({ orderTable: newItems });
   };
 
   const handleNext = () => {
@@ -94,17 +94,8 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
       return;
     }
 
-    const finalPrice = cartItems.reduce((total, item) => {
-      const price = item.price ?? 0;
-      const quantity = item.quantity ?? 0;
-      return total + (price * quantity);
-    }, 0);
-
-    // 다음 스텝으로 넘어갈 때 최종 가격과 orderTables를 업데이트합니다.
-    updateOrderData({
-      finalPrice,
-      orderTables: cartItems
-    });
+    // 다음 스텝으로 넘어갑니다. 가격은 다음 단계에서 계산합니다.
+    updateOrderData({ orderTable: cartItems });
 
     goToNextStep();
   };
@@ -149,14 +140,14 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
           </div>
           <div className="cart-items-list scrollable">
             {cartItems.length > 0 ? (
-                cartItems.map(item => (
+                cartItems.map((item: any) => (
                     <div key={item.productId} className="cart-item-v2">
                       <p className="item-name">{item.riceCakeName}</p>
                       <div className="item-controls-grid">
-                        <label>수량</label>
-                        <input type="number" value={item.quantity} onChange={(e) => updateItem(item.productId, { quantity: Number(e.target.value) })} min="1"/>
-                        <label>단위</label>
-                        <select value={item.unit} onChange={(e) => updateItem(item.productId, { unit: e.target.value as Unit })}>
+                        <label htmlFor={`qty-${item.productId}`}>수량</label>
+                        <input id={`qty-${item.productId}`} type="number" value={item.quantity} onChange={(e) => updateItem(item.productId, { quantity: Number(e.target.value) })} min="1"/>
+                        <label htmlFor={`unit-${item.productId}`}>단위</label>
+                        <select id={`unit-${item.productId}`} value={item.unit} onChange={(e) => updateItem(item.productId, { unit: e.target.value as Unit })}>
                           <option value="kg">kg</option><option value="되">되</option><option value="말">말</option><option value="개">개</option><option value="팩">팩</option>
                         </select>
                         <label>쌀</label>

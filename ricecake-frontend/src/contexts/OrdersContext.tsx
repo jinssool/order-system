@@ -17,7 +17,7 @@ const initialOrders: Order[] = [
     id: 1,
     customerId: 101,
     customerName: "김민준",
-    items: [
+    orderTable: [
       { riceCakeId: 1, riceCakeName: "송편", quantity: 2, unit: "kg", hasRice: true },
       { riceCakeId: 3, riceCakeName: "꿀떡", quantity: 30, unit: "개", hasRice: false },
     ],
@@ -42,7 +42,7 @@ const ordersReducer = (state: Order[], action: Action): Order[] => {
         id: nextId,
         customerId: payload.customerId || 0,
         customerName: payload.customerName || "",
-        items: (payload.items as any) || [],
+        orderTable: (payload as any).orderTable || [],
         pickupDate: payload.pickupDate || "",
         pickupTime: payload.pickupTime || "09:00",
         isPaid: !!payload.isPaid,
