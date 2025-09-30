@@ -84,11 +84,7 @@ const OrderEditPage = () => {
       return;
     }
 
-    const customerId = order.customerId || order.customer?.id || customerFromState?.id;
-    if (!customerId) {
-      alert('고객 정보가 누락되어 주문을 수정할 수 없습니다.');
-      return;
-    }
+
 
     const formattedPickupDate = `${pickupDate}T${pickupHour}:${pickupMinute}:00`;
 
@@ -104,7 +100,6 @@ const OrderEditPage = () => {
       const updatedOrderData = {
         ...order,
         memo,
-        customerId: customerId,
         pickupDate: formattedPickupDate,
         finalPrice: totalPrice,
         orderTables: orderTablesPayload,

@@ -80,13 +80,13 @@ const OrderDetailPage = () => {
     const customerName = customerFromState?.name || order.customer?.name || '해당 고객';
     if (window.confirm(`'${customerName}'님의 주문을 정말 삭제하시겠습니까?`)) {
       try {
-        const res = await fetch(`${ORDERS_API_URL}/${order.orderId}`, {
+        const res = await fetch(`${ORDERS_API_URL}?ids=${order.orderId}`, {
           method: 'DELETE',
         });
 
         if (res.ok) {
           alert('주문이 삭제되었습니다.');
-          navigate('/orders');
+          navigate('/');
         } else {
           const errorText = await res.text();
           throw new Error(`주문 삭제에 실패했습니다: ${errorText}`);
