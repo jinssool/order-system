@@ -11,8 +11,8 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 8px;
-  width: 300px;
-  height: 280px; /* 생산계획은 더 작은 크기 */
+  width: 350px; /* 너비 증가 */
+  height: 400px; /* 높이 증가 */
 }
 
 /* 생산계획 페이지의 캘린더만 적용 */
@@ -27,15 +27,15 @@
   font-size: 0.9em; /* 더 작은 폰트 */
 }
 
-/* 생산계획 캘린더 타일 - 더 작은 크기 */
+/* 생산계획 캘린더 타일 - 적절한 크기 */
 .production-page .react-calendar__tile {
-  height: 35px !important; /* 메인화면보다 더 작은 타일 */
-  font-size: 0.85em !important;
+  height: 45px !important; /* 타일 높이 증가 */
+  font-size: 0.9em !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2px;
+  padding: 4px;
 }
 
 /* 생산계획 캘린더 네비게이션 표시 */

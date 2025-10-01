@@ -65,11 +65,15 @@ const OrderListPage = () => {
   }, []);
 
   const ordersByDate = useMemo(() => {
-    return orders.reduce((acc, order) => {
+    console.log('Orders for date calculation:', orders);
+    const result = orders.reduce((acc, order) => {
       const date = order.pickupDate;
+      console.log(`Order ${order.orderId}: pickupDate = ${date}`);
       acc[date] = (acc[date] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
+    console.log('Orders by date:', result);
+    return result;
   }, [orders]);
 
   const ordersForSelectedDate = useMemo(() => {
