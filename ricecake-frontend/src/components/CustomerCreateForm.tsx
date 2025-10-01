@@ -4,7 +4,7 @@ import type { Customer } from '../types';
 import '../pages/FormPage.css';
 
 // 백엔드 API URL을 상수로 정의
-const CUSTOMERS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers';
+const CUSTOMERS_API_URL = 'http://localhost:8080/api-v1/customers';
 
 interface Props {
     initialName?: string;

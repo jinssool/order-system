@@ -8,9 +8,9 @@ import OrderCard from '../components/OrderCard';
 import DailyStats from '../components/DailyStats';
 import { getYYYYMMDD } from '../utils/dateUtils';
 import './OrderListPage.css';
-import './MainCalendarView.css';
+import './CalendarView.css';
 
-const ORDERS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/orders';
+const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 
 type SortType = 'time' | 'cake' | 'status';
 
@@ -49,7 +49,7 @@ const OrderListPage = () => {
               riceCakeName: product.productName || '정보 없음',
               quantity: product.quantity ?? 0,
               unit: product.unit || '정보 없음',
-              hasRice: product.hasRice !== undefined ? product.hasRice : order.hasRice,
+              hasRice: order.hasRice,
             }))
           };
         });
@@ -105,16 +105,7 @@ const OrderListPage = () => {
       const dateString = getYYYYMMDD(date);
       const count = ordersByDate[dateString];
       if (count > 0) {
-        let intensity = 'low';
-        if (count >= 19) {
-          intensity = 'extreme';
-        } else if (count >= 13) {
-          intensity = 'very-high';
-        } else if (count >= 8) {
-          intensity = 'high';
-        } else if (count >= 4) {
-          intensity = 'medium';
-        }
+        const intensity = count >= 5 ? 'high' : count >= 2 ? 'medium' : 'low';
         return <div className={`order-dot ${intensity}`}></div>;
       }
     }
@@ -147,7 +138,6 @@ const OrderListPage = () => {
                   formatDay={(_, date) => date.getDate().toString()}
                   tileContent={renderTileContent}
                   locale="ko"
-                  calendarType="hebrew"
                   formatMonthYear={formatMonthYear}
                   formatShortWeekday={formatShortWeekday}
               />
@@ -180,7 +170,7 @@ const OrderListPage = () => {
           <div className="order-list-content">
             {sortedAndFilteredOrders.length > 0 ? (
                 sortedAndFilteredOrders.map(order => (
-                    <Link key={order.orderId} to={`/orders/${order.orderId}`} state={{ customerData: { name: order.customerName } }}>
+                    <Link to={`/orders/${order.orderId}`} state={{ customerData: { name: order.customerName } }}>
                       <OrderCard order={order} />
                     </Link>
                 ))

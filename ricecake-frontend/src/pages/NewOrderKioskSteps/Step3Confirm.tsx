@@ -7,7 +7,7 @@ import { getYYYYMMDD } from '../../utils/dateUtils';
 import type { Order } from '../../types';
 import '../NewOrderKiosk.css';
 
-const ORDERS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/orders';
+const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 
 interface StepProps {
   orderData: Partial<Order>;

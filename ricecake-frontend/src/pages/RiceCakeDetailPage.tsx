@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import './DetailPage.css';
 
-const PRODUCTS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/products';
+const PRODUCTS_API_URL = 'http://localhost:8080/api-v1/products';
 
 const RiceCakeDetailPage = () => {
   const { cakeId } = useParams();
