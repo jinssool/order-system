@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: y
+      - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAPPYDDUCK_E565B }}
-          projectId: happydduck-e565b
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HAPPY_TTEOK }}
+          projectId: happy-tteok
