@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import './OrderDetailPage.css';
 
-const ORDERS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/orders';
+const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 
 const OrderDetailPage = () => {
   const { orderId } = useParams<{ orderId: string }>();
