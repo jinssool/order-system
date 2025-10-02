@@ -6,7 +6,7 @@ import type { Order, Customer } from '../../types';
 import '../NewOrderKiosk.css';
 import { getFirstConsonant } from '../../utils/hangulUtils';
 
-const CUSTOMERS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers';
+const CUSTOMERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/customers';
 
 interface StepProps {
     orderData: Partial<Order>;

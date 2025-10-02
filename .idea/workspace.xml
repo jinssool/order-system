@@ -5,12 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2ce2ec4-5908-4354-b394-00c5b460524e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/firebase-hosting-merge.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/firebase-hosting-merge.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/firebase-hosting-pull-request.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/firebase-hosting-pull-request.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/.firebase/hosting.ZGlzdA.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/.firebase/hosting.ZGlzdA.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/.firebaserc" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/.firebaserc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ricecake-frontend/firebase.json" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/firebase.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/components/CustomerCreateForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/components/CustomerCreateForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerCreatePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerCreatePage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerDetailPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerEditPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerEditPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerListPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/CustomerListPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step1Customer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step1Customer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step2RiceCake.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step2RiceCake.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step3Confirm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderKioskSteps/Step3Confirm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/NewOrderPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderDetailPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderEditPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderEditPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderListPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/OrderListPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/ProductionOrdersPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/ProductionOrdersPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/ProductionPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/ProductionPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeCreatePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeCreatePage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeDetailPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeDetailPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeEditPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeEditPage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeListPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ricecake-frontend/src/pages/RiceCakeListPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +30,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="test" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{

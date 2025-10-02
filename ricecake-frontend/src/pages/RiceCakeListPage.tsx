@@ -5,7 +5,7 @@ import { getFirstConsonant } from '../utils/hangulUtils';
 import './ListPage.css';
 
 const CONSONANTS = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
-const API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/products';
+const API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/products';
 
 const RiceCakeListPage = () => {
   const [riceCakes, setRiceCakes] = useState<any[]>([]);

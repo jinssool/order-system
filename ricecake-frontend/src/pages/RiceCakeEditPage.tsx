@@ -4,7 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Unit } from '../types';
 import './FormPage.css';
 
-const API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/products';
+const API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/products';
 
 interface UnitPrice {
     unit: Unit;

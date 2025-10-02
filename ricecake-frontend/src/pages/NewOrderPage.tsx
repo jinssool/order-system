@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import type { Unit } from '../types';
 import './NewOrderPage.css';
 
-const ORDERS_API_URL = 'https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/orders';
+const ORDERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders';
 
 const NewOrderPage = () => {
   const navigate = useNavigate();

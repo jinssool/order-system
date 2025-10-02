@@ -23,7 +23,7 @@ const CustomerEditPage = () => {
             setError(null);
 
             try {
-                const response = await fetch(`https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers/${customerId}`);
+                const response = await fetch(`https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/customers/${customerId}`);
                 if (!response.ok) {
                     throw new Error('고객 정보를 불러오는 데 실패했습니다.');
                 }
@@ -53,7 +53,7 @@ const CustomerEditPage = () => {
         };
 
         try {
-            const response = await fetch(`https://happy-dduck-545254795273.asia-northeast3.run.app/api-v1/customers/${customerId}`, {
+            const response = await fetch(`https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/customers/${customerId}`, {
                 method: 'PUT', // 또는 'PATCH'
                 headers: {
                     'Content-Type': 'application/json',
