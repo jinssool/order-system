@@ -4,15 +4,18 @@
 .production-page .calendar-container {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0; /* 오른쪽 정렬로 변경 */
   z-index: 1000;
   background: white;
   border: 2px solid #e9ecef;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 8px;
-  width: 350px; /* 너비 증가 */
-  height: 400px; /* 높이 증가 */
+  width: 300px; /* 너비 조정 */
+  height: 350px; /* 높이 조정 */
+  max-width: calc(100vw - 40px); /* 화면 너비를 넘지 않도록 */
+  display: block !important; /* 강제로 표시 */
+  visibility: visible !important; /* 강제로 보이게 */
 }
 
 /* 생산계획 페이지의 캘린더만 적용 */
@@ -25,6 +28,27 @@
   display: block !important;
   visibility: visible !important;
   font-size: 0.9em; /* 더 작은 폰트 */
+}
+
+/* 달력 월 뷰 표시 강제 */
+.production-page .react-calendar__month-view {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* 달력 날짜 그리드 표시 강제 */
+.production-page .react-calendar__month-view__days {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  visibility: visible !important;
+}
+
+/* 달력 날짜 타일 표시 강제 */
+.production-page .react-calendar__month-view__days__day {
+  display: block !important;
+  visibility: visible !important;
+  flex: 0 0 calc(100% / 7) !important;
+  text-align: center !important;
 }
 
 /* 생산계획 캘린더 타일 - 적절한 크기 */
@@ -167,3 +191,4 @@ button[aria-label*="Delete"],
 .react-calendar__month-view__days__day:nth-child(7n) {
   color: #dc3545; /* 토요일 */
 }
+

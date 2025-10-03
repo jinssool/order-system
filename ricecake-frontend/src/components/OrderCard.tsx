@@ -1,14 +1,20 @@
 // src/components/OrderCard.tsx
+import { useState } from 'react';
 import StatusTag from "./StatusTag";
 import "./StatusTag.css";
 import type { Order } from "../types";
 import './OrderCard.css';
 
+const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
+
 interface OrderCardProps {
     order: Order;
+    onStatusChange?: () => void; // 상태 변경 후 콜백
 }
 
-const OrderCard = ({ order }: OrderCardProps) => {
+const OrderCard = ({ order, onStatusChange }: OrderCardProps) => {
+    const [isUpdating, setIsUpdating] = useState(false);
+    
     // order.items가 존재하는지 먼저 확인하고, 첫 번째 요소를 가져옵니다.
     const firstItem = order.products?.[0];
 
@@ -16,6 +22,37 @@ const OrderCard = ({ order }: OrderCardProps) => {
     if (!firstItem) {
         return null;
     }
+
+    const handleStatusChange = async (field: 'isPaid' | 'isPickedUp', e: React.MouseEvent) => {
+        e.preventDefault(); // Link 클릭 방지
+        e.stopPropagation(); // 이벤트 버블링 방지
+        
+        if (isUpdating) return;
+        
+        setIsUpdating(true);
+        try {
+            const endpoint = `${ORDERS_API_URL}/${order.orderId}/${field === 'isPaid' ? 'payments' : 'picks'}`;
+            const res = await fetch(endpoint, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (res.ok) {
+                // 상태 변경 성공 시 콜백 호출
+                if (onStatusChange) {
+                    onStatusChange();
+                }
+                alert(`${field === 'isPaid' ? '결제' : '수령'} 상태가 변경되었습니다.`);
+            } else {
+                const errorText = await res.text();
+                throw new Error(`상태 변경에 실패했습니다: ${errorText}`);
+            }
+        } catch (e: any) {
+            alert(`오류: ${e.message}`);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
     return (
         <div className="order-card-final">
@@ -34,14 +71,20 @@ const OrderCard = ({ order }: OrderCardProps) => {
             </div>
             <div className="card-right">
                 <div className="status-tags-inline">
-                    {order.isPaid
-                        ? <StatusTag label="결제완료" type="paid" />
-                        : <StatusTag label="미결제" type="unpaid" />
-                    }
-                    {order.isDelivered
-                        ? <StatusTag label="수령완료" type="delivered" />
-                        : <StatusTag label="미수령" type="undelivered" />
-                    }
+                    <button
+                        className={`status-tag-btn payment ${order.isPaid ? 'paid' : 'unpaid'}`}
+                        onClick={(e) => handleStatusChange('isPaid', e)}
+                        disabled={isUpdating}
+                    >
+                        {order.isPaid ? '결제완료' : '미결제'}
+                    </button>
+                    <button
+                        className={`status-tag-btn pickup ${order.isDelivered ? 'delivered' : 'undelivered'}`}
+                        onClick={(e) => handleStatusChange('isPickedUp', e)}
+                        disabled={isUpdating}
+                    >
+                        {order.isDelivered ? '수령완료' : '미수령'}
+                    </button>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ import OrderCard from '../components/OrderCard';
 import DailyStats from '../components/DailyStats';
 import { getYYYYMMDD } from '../utils/dateUtils';
 import './OrderListPage.css';
+import './MainCalendarView.css';
 import './CalendarView.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
@@ -22,6 +23,42 @@ const OrderListPage = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // 주문 상태 변경 후 데이터 새로고침
+  const handleOrderStatusChange = async () => {
+    try {
+      const response = await fetch(`${ORDERS_API_URL}?page=0&size=1000`);
+      if (!response.ok) {
+        throw new Error('주문 목록을 불러오는 데 실패했습니다.');
+      }
+      const data = await response.json();
+      const orderContent = data.content;
+
+      const formattedOrders = orderContent.map((order: any) => {
+        // 'customer' 필드가 존재하지 않거나, 'customer.name'이 없는 경우를 처리
+        const customerName = order.customer?.name || order.customerName || '정보 없음';
+
+        return {
+          ...order,
+          pickupDate: order.pickupDate ? new Date(order.pickupDate).toISOString().substring(0, 10) : '',
+          pickupTime: order.pickupDate ? new Date(order.pickupDate).toISOString().substring(11, 16) : '',
+          customerName: customerName,
+          isDelivered: order.isPickedUp,
+          // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
+          items: (order.products || []).map((product: any) => ({
+            riceCakeName: product.productName || '정보 없음',
+            quantity: product.quantity ?? 0,
+            unit: product.unit || '정보 없음',
+            hasRice: order.hasRice,
+          }))
+        };
+      });
+
+      setOrders(formattedOrders);
+    } catch (e: any) {
+      console.error("주문 상태 새로고침 실패:", e);
+    }
+  };
 
   useEffect(() => {
     const fetchAllOrders = async () => {
@@ -174,8 +211,8 @@ const OrderListPage = () => {
           <div className="order-list-content">
             {sortedAndFilteredOrders.length > 0 ? (
                 sortedAndFilteredOrders.map(order => (
-                    <Link to={`/orders/${order.orderId}`} state={{ customerData: { name: order.customerName } }}>
-                      <OrderCard order={order} />
+                    <Link to={`/orders/${order.orderId}`} state={{ customerData: { id: order.customerId, name: order.customerName } }}>
+                      <OrderCard order={order} onStatusChange={handleOrderStatusChange} />
                     </Link>
                 ))
             ) : (

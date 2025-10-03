@@ -5,6 +5,7 @@ import type { Unit } from '../types';
 import './FormPage.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
+const PRODUCTS_API_URL = 'http://localhost:8080/api-v1/products';
 
 const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
@@ -36,6 +37,8 @@ const OrderEditPage = () => {
   const [pickupDate, setPickupDate] = useState('');
   const [pickupHour, setPickupHour] = useState('00');
   const [pickupMinute, setPickupMinute] = useState('00');
+  const [isAllDay, setIsAllDay] = useState(false); // 하루종일 옵션
+  const [isPrepaid, setIsPrepaid] = useState(false); // 사전 결제 여부
   const [totalPrice, setTotalPrice] = useState(0);
 
   // 주문 아이템들 (개별 수정 가능)
@@ -49,6 +52,43 @@ const OrderEditPage = () => {
     unit: 'kg' as Unit,
     hasRice: false
   });
+
+  // 자동 가격 계산 함수
+  const calculateTotalPrice = () => {
+    return orderItems.reduce((total, item) => {
+      const product = products.find(p => p.id === item.productId);
+      if (!product) return total;
+      
+      let price = 0;
+      switch (item.unit) {
+        case 'kg':
+          price = product.pricePerKg || 0;
+          break;
+        case '되':
+          price = product.pricePerDoe || 0;
+          break;
+        case '말':
+          price = product.pricePerMal || 0;
+          break;
+        case '개':
+          price = product.pricePerPiece || 0;
+          break;
+        case '팩':
+          price = product.pricePerPack || 0;
+          break;
+        default:
+          price = 0;
+      }
+      
+      return total + (price * item.quantity);
+    }, 0);
+  };
+
+  // 가격이 변경될 때마다 자동 계산
+  useEffect(() => {
+    const calculatedPrice = calculateTotalPrice();
+    setTotalPrice(calculatedPrice);
+  }, [orderItems, products]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,6 +123,8 @@ const OrderEditPage = () => {
         setPickupDate(orderData.pickupDate?.substring(0, 10) || '');
         setPickupHour(orderData.pickupDate ? String(new Date(orderData.pickupDate).getHours()).padStart(2, '0') : '00');
         setPickupMinute(orderData.pickupDate ? String(new Date(orderData.pickupDate).getMinutes()).padStart(2, '0') : '00');
+        setIsAllDay(orderData.isAllDay || false); // 하루종일 옵션 초기화
+        setIsPrepaid(orderData.isPrepaid || false); // 사전 결제 여부 초기화
         setMemo(orderData.memo || '');
         setTotalPrice(orderData.totalPrice || 0);
 
@@ -195,20 +237,54 @@ const OrderEditPage = () => {
       return;
     }
 
-    const formattedPickupDate = `${pickupDate}T${pickupHour}:${pickupMinute}:00`;
+      const formattedPickupDate = isAllDay 
+        ? `${pickupDate}T00:00:00` // 하루종일인 경우 00:00으로 설정
+        : `${pickupDate}T${pickupHour}:${pickupMinute}:00`;
 
     try {
       const orderTablesPayload = orderItems.map((item) => ({
+        id: item.id, // 기존 아이템의 ID 포함
         productId: item.productId,
         quantity: item.quantity,
         unit: item.unit,
         hasRice: item.hasRice
       }));
 
+      // customerId가 없으면 고객 정보에서 가져오기 (우선순위 순서)
+      let customerId = order.customerId;
+      
+      // 1순위: state로 전달된 고객 정보의 ID
+      if (!customerId && customerFromState?.id) {
+        customerId = customerFromState.id;
+      }
+      
+      // 2순위: 주문 데이터에 포함된 고객 정보의 ID
+      if (!customerId && order.customer?.id) {
+        customerId = order.customer.id;
+      }
+      
+      // 3순위: 주문 데이터의 customerId 필드 (이미 위에서 확인했지만 안전장치)
+      if (!customerId && order.customerId) {
+        customerId = order.customerId;
+      }
+      
+      // 모든 방법으로도 customerId를 찾을 수 없는 경우
+      if (!customerId) {
+        console.error('Customer ID not found:', {
+          orderCustomerId: order.customerId,
+          customerFromState: customerFromState,
+          orderCustomer: order.customer
+        });
+        alert('고객 정보를 찾을 수 없습니다. 주문을 수정할 수 없습니다.');
+        return;
+      }
+
       const updatedOrderData = {
-        customerId: order.customerId,
+        customerId: customerId,
         memo,
         pickupDate: formattedPickupDate,
+        isAllDay: isAllDay, // 하루종일 옵션
+        isPrepaid: isPrepaid, // 사전 결제 여부
         finalPrice: totalPrice,
         isPaid: order.isPaid,
         isPickedUp: order.isPickedUp,
@@ -248,7 +324,7 @@ const OrderEditPage = () => {
     return <div className="page-container">주문 정보를 찾을 수 없습니다.</div>;
   }
 
-  const customerInfo = customerFromState || order.customer || {};
+  const customerInfo = customerFromState || order?.customer || { name: '정보 없음' };
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>
@@ -448,12 +524,47 @@ const OrderEditPage = () => {
         <label>픽업 날짜 및 시간</label>
         <div className="time-selects">
           <input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} />
-          <select value={pickupHour} onChange={e => setPickupHour(e.target.value)}>
-            {hours.map(h => <option key={h} value={h}>{h}시</option>)}
-          </select>
-          <select value={pickupMinute} onChange={e => setPickupMinute(e.target.value)}>
-            {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
-          </select>
+          <div className="time-controls">
+            <div className="time-inputs">
+              <select value={pickupHour} onChange={e => setPickupHour(e.target.value)} disabled={isAllDay}>
+                {hours.map(h => <option key={h} value={h}>{h}시</option>)}
+              </select>
+              <select value={pickupMinute} onChange={e => setPickupMinute(e.target.value)} disabled={isAllDay}>
+                {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
+              </select>
+            </div>
+            <div className="all-day-toggle">
+              <label className="all-day-checkbox">
+                <input 
+                  type="checkbox" 
+                  checked={isAllDay} 
+                  onChange={(e) => setIsAllDay(e.target.checked)}
+                />
+                <span>하루종일</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 사전 결제 여부 */}
+      <div className="form-group">
+        <label>사전 결제 여부</label>
+        <div className="prepayment-toggle">
+          <button 
+            type="button" 
+            className={isPrepaid ? 'active' : ''} 
+            onClick={() => setIsPrepaid(true)}
+          >
+            사전 결제 완료
+          </button>
+          <button 
+            type="button" 
+            className={!isPrepaid ? 'active' : ''} 
+            onClick={() => setIsPrepaid(false)}
+          >
+            미결제
+          </button>
         </div>
       </div>
 

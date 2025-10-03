@@ -72,7 +72,34 @@ const CustomerDetailPage = () => {
     fetchCustomerData();
   }, [customerId]); // customerId가 변경될 때마다 재실행
 
-  // 고객 삭제 API 호출
+  // 주문 상태 변경 후 데이터 새로고침
+  const handleOrderStatusChange = async () => {
+    if (!customerId) return;
+    
+    try {
+      const params = new URLSearchParams();
+      params.append('page', '0');
+      params.append('size', '50');
+      params.append('sort', 'orderDate');
+      
+      const url = `http://localhost:8080/api-v1/orders/by-customer/${customerId}?${params.toString()}`;
+      const ordersRes = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        const ordersContent = ordersData.content || ordersData;
+        
+        if (Array.isArray(ordersContent)) {
+          setCustomerOrders(ordersContent);
+        }
+      }
+    } catch (e: any) {
+      console.error("주문 상태 새로고침 실패:", e);
+    }
+  };
   const handleDelete = async () => {
     if (!customer || !customerId) return;
     if (window.confirm(`'${customer.name}' 고객 정보를 정말 삭제하시겠습니까?`)) {
@@ -140,7 +167,7 @@ const CustomerDetailPage = () => {
                               className="order-card-link"
                               state={{ customerData: customer }} // customer 객체를 state로 전달
                           >
-                            <MiniOrderCard order={order} />
+                            <MiniOrderCard order={order} onStatusChange={handleOrderStatusChange} />
                           </Link>
                       ))
               ) : (

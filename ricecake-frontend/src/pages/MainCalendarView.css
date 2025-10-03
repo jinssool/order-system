@@ -202,3 +202,4 @@ button[aria-label*="Delete"],
 .react-calendar__month-view__days__day:nth-child(7n) {
   color: #dc3545; /* 토요일 */
 }
+
