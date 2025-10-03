@@ -46,5 +46,6 @@ export interface Order {
   isPickedUp: boolean;
   isDelivered?: boolean; // 호환성을 위해 추가
   hasRice: boolean;
+  isAllDay?: boolean; // 하루종일 옵션
   memo?: string;
 }

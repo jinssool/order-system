@@ -1,7 +1,8 @@
 // src/components/OrderCard.tsx
 import { useState } from 'react';
-import StatusTag from "./StatusTag";
-import "./StatusTag.css";
+import SearchHighlight from "./SearchHighlight";
+import SearchReasonTags from "./SearchReasonTags";
+import "./SearchHighlight.css";
 import type { Order } from "../types";
 import './OrderCard.css';
 
@@ -10,9 +11,11 @@ const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
 interface OrderCardProps {
     order: Order;
     onStatusChange?: () => void; // 상태 변경 후 콜백
+    searchQuery?: string; // 검색어
+    searchReasons?: string[]; // 검색된 이유들
 }
 
-const OrderCard = ({ order, onStatusChange }: OrderCardProps) => {
+const OrderCard = ({ order, onStatusChange, searchQuery, searchReasons }: OrderCardProps) => {
     const [isUpdating, setIsUpdating] = useState(false);
     
     // order.items가 존재하는지 먼저 확인하고, 첫 번째 요소를 가져옵니다.
@@ -56,18 +59,34 @@ const OrderCard = ({ order, onStatusChange }: OrderCardProps) => {
 
     return (
         <div className="order-card-final">
+            <div className="card-order-number">
+                <span className="order-number">{order.orderNumber || '?'}</span>
+            </div>
             <div className="card-left">
                 <p className="pickup-time">{order.pickupTime}</p>
-                <p className="customer-name">{order.customerName || '알 수 없음'}</p>
+                <div className="customer-info">
+                    <SearchHighlight 
+                        text={order.customerName || '알 수 없음'} 
+                        searchQuery={searchQuery || ''}
+                        className="customer-name"
+                    />
+                    {searchReasons && searchReasons.length > 0 && (
+                        <SearchReasonTags reasons={searchReasons} />
+                    )}
+                </div>
             </div>
             <div className="card-middle">
-                <p className="rice-cake-info">
-                    {firstItem.productName}
+                <div className="rice-cake-info">
+                    <SearchHighlight 
+                        text={firstItem.productName} 
+                        searchQuery={searchQuery || ''}
+                        className="rice-cake-name"
+                    />
                     {/* items가 존재하는지 확인 후 길이를 체크합니다. */}
                     {order.products && order.products.length > 1 && (
-                        <span> 외 {order.products.length - 1}건</span>
+                        <span className="additional-items"> 외 {order.products.length - 1}건</span>
                     )}
-                </p>
+                </div>
             </div>
             <div className="card-right">
                 <div className="status-tags-inline">

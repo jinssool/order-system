@@ -28,7 +28,7 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
   const [isAllDay, setIsAllDay] = useState(false); // 하루종일 옵션 (UI용)
   const [isPrepaid, setIsPrepaid] = useState(false); // 결제 여부
   const [memo, setMemo] = useState((orderData as any).memo || '');
-  const [editablePrice, setEditablePrice] = useState(0);
+  const [editablePrice, setEditablePrice] = useState('');
   
   // 모달 상태
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
@@ -55,14 +55,21 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
   }, 0);
 
   useEffect(() => {
-    // 계산된 금액으로 초기화
-    setEditablePrice(finalPrice);
+    // 계산된 금액으로 초기화 (빈 값이 아닐 때만)
+    if (editablePrice === '') {
+      setEditablePrice(finalPrice.toString());
+    }
   }, [finalPrice]);
 
   const handleSaveOrder = async () => {
+    // 한국 시간대(UTC+9)를 고려한 날짜 생성
+    const year = pickupDate.getFullYear();
+    const month = String(pickupDate.getMonth() + 1).padStart(2, '0');
+    const day = String(pickupDate.getDate()).padStart(2, '0');
+    
     const formattedPickupDate = isAllDay 
-      ? `${getYYYYMMDD(pickupDate)}T00:00:00` // 하루종일인 경우 00:00으로 설정
-      : `${getYYYYMMDD(pickupDate)}T${pickupHour}:${pickupMinute}:00`;
+      ? `${year}-${month}-${day}T00:00:00` // 하루종일인 경우 00:00으로 설정
+      : `${year}-${month}-${day}T${pickupHour}:${pickupMinute}:00`;
 
     // 백엔드 API 스키마에 맞는 orderTables 배열을 생성합니다.
     const orderTablesForApi = (cartItems || []).map((item: any) => ({
@@ -72,14 +79,32 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
       hasRice: item.hasRice
     }));
 
+    // 데이터 검증
+    if (!(orderData as any).customerId) {
+      alert('고객 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
+      return;
+    }
+    
+    if (!orderTablesForApi || orderTablesForApi.length === 0) {
+      alert('떡 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
+      return;
+    }
+    
+    const finalPriceValue = Number(editablePrice) || finalPrice;
+    if (!finalPriceValue || finalPriceValue <= 0) {
+      alert('가격 정보가 올바르지 않습니다. 가격을 확인해주세요.');
+      return;
+    }
+
     const finalOrderData = {
       customerId: (orderData as any).customerId,
       pickupDate: formattedPickupDate,
       memo: memo,
-      finalPrice: Number(editablePrice), // 숫자 타입으로 변환
+      finalPrice: finalPriceValue, // 검증된 가격 사용
       isPaid: isPrepaid, // 결제 여부
       isPickedUp: false,
-      hasRice: orderTablesForApi.some(item => item.hasRice), // 전체 주문의 쌀지참 여부
+      hasRice: orderTablesForApi.some((item: any) => item.hasRice), // 전체 주문의 쌀지참 여부
+      isAllDay: isAllDay, // 하루종일 옵션
       orderTables: orderTablesForApi
     };
 
@@ -92,22 +117,6 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
     console.log('isPrepaid:', isPrepaid);
     console.log('finalOrderData:', finalOrderData);
     console.log('========================');
-
-    // 데이터 검증
-    if (!finalOrderData.customerId) {
-      alert('고객 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
-      return;
-    }
-    
-    if (!finalOrderData.orderTables || finalOrderData.orderTables.length === 0) {
-      alert('떡 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
-      return;
-    }
-    
-    if (!finalOrderData.finalPrice || finalOrderData.finalPrice <= 0) {
-      alert('가격 정보가 올바르지 않습니다. 가격을 확인해주세요.');
-      return;
-    }
     
     if (!finalOrderData.pickupDate) {
       alert('픽업 날짜가 설정되지 않았습니다.');
@@ -216,8 +225,9 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
               id="totalPrice"
               type="number" 
               value={editablePrice} 
-              onChange={(e) => setEditablePrice(Number(e.target.value))}
+              onChange={(e) => setEditablePrice(e.target.value)}
               className="price-input"
+              placeholder="가격을 입력하세요"
             />
             <span className="price-unit">원</span>
           </div>

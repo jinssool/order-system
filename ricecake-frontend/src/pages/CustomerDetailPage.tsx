@@ -72,6 +72,68 @@ const CustomerDetailPage = () => {
     fetchCustomerData();
   }, [customerId]); // customerId가 변경될 때마다 재실행
 
+  // 주문 업데이트 이벤트 리스너 추가
+  useEffect(() => {
+    const handleOrderUpdate = () => {
+      console.log('고객 상세 페이지: 주문 업데이트 이벤트 수신, 데이터 새로고침 중...');
+      if (!customerId) return;
+      
+      const fetchCustomerData = async () => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+          // 고객 정보 API 호출
+          const customerRes = await fetch(`http://localhost:8080/api-v1/customers/${customerId}`);
+          if (!customerRes.ok) {
+            throw new Error('고객 정보를 불러오는 데 실패했습니다.');
+          }
+          const customerData = await customerRes.json();
+          setCustomer(customerData);
+
+          const params = new URLSearchParams();
+          params.append('page', '0');
+          params.append('size', '50');
+          params.append('sort', 'orderDate');
+          // 고객의 주문 내역 API 호출
+          const url = `http://localhost:8080/api-v1/orders/by-customer/${customerId}?${params.toString()}`;
+          const ordersRes = await fetch(url, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          if (!ordersRes.ok) {
+            throw new Error('주문 내역을 불러오는 데 실패했습니다.');
+          }
+
+          const ordersData = await ordersRes.json();
+          const ordersContent = ordersData.content || ordersData;
+
+          if (Array.isArray(ordersContent) && ordersContent.length === 0) {
+            setCustomerOrders([]);
+          } else if (Array.isArray(ordersContent)) {
+            setCustomerOrders(ordersContent);
+          } else {
+            throw new Error('서버 응답 형식이 올바르지 않습니다.');
+          }
+
+        } catch (e: any) {
+          setError(e.message);
+          console.error("API fetch error:", e);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchCustomerData();
+    };
+
+    window.addEventListener('orderUpdated', handleOrderUpdate);
+    
+    return () => {
+      window.removeEventListener('orderUpdated', handleOrderUpdate);
+    };
+  }, [customerId]);
+
   // 주문 상태 변경 후 데이터 새로고침
   const handleOrderStatusChange = async () => {
     if (!customerId) return;

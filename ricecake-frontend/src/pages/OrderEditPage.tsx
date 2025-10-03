@@ -1,7 +1,7 @@
 // src/pages/OrderEditPage.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import type { Unit } from '../types';
+import type { Unit, Order } from '../types';
 import './FormPage.css';
 
 const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
@@ -27,7 +27,7 @@ const OrderEditPage = () => {
 
   const customerFromState = location.state?.customerData;
 
-  const [order, setOrder] = useState<any | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>([]);
@@ -39,7 +39,7 @@ const OrderEditPage = () => {
   const [pickupMinute, setPickupMinute] = useState('00');
   const [isAllDay, setIsAllDay] = useState(false); // 하루종일 옵션
   const [isPrepaid, setIsPrepaid] = useState(false); // 사전 결제 여부
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState('');
 
   // 주문 아이템들 (개별 수정 가능)
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -48,7 +48,7 @@ const OrderEditPage = () => {
   const [showAddItem, setShowAddItem] = useState(false);
   const [newItem, setNewItem] = useState({
     productId: 0,
-    quantity: 1,
+    quantity: '',
     unit: 'kg' as Unit,
     hasRice: false
   });
@@ -87,7 +87,7 @@ const OrderEditPage = () => {
   // 가격이 변경될 때마다 자동 계산
   useEffect(() => {
     const calculatedPrice = calculateTotalPrice();
-    setTotalPrice(calculatedPrice);
+    setTotalPrice(calculatedPrice.toString());
   }, [orderItems, products]);
 
   useEffect(() => {
@@ -116,17 +116,34 @@ const OrderEditPage = () => {
         const orderData = await orderRes.json();
         const productsData = await productsRes.json();
         
+        console.log('=== 주문 데이터 로딩 디버깅 ===');
+        console.log('orderData:', orderData);
+        console.log('productsData:', productsData);
+        console.log('customerFromState:', customerFromState);
+        console.log('==============================');
+        
         setOrder(orderData);
         setProducts(productsData.content || []);
 
         // 주문 정보 설정
         setPickupDate(orderData.pickupDate?.substring(0, 10) || '');
-        setPickupHour(orderData.pickupDate ? String(new Date(orderData.pickupDate).getHours()).padStart(2, '0') : '00');
-        setPickupMinute(orderData.pickupDate ? String(new Date(orderData.pickupDate).getMinutes()).padStart(2, '0') : '00');
+        
+        // 픽업 시간 파싱 (하루종일이 아닌 경우에만)
+        if (orderData.isAllDay) {
+          setPickupHour('00');
+          setPickupMinute('00');
+        } else {
+          const pickupDateTime = new Date(orderData.pickupDate);
+          // +9시간 추가 (로컬 테스트용 - 주문 리스트와 일관성 유지)
+          const adjustedTime = new Date(pickupDateTime.getTime() + (9 * 60 * 60 * 1000));
+          setPickupHour(String(adjustedTime.getHours()).padStart(2, '0'));
+          setPickupMinute(String(adjustedTime.getMinutes()).padStart(2, '0'));
+        }
+        
         setIsAllDay(orderData.isAllDay || false); // 하루종일 옵션 초기화
-        setIsPrepaid(orderData.isPrepaid || false); // 사전 결제 여부 초기화
+        setIsPrepaid(orderData.isPaid || false); // 결제 상태 초기화 (백엔드의 isPaid 필드 사용)
         setMemo(orderData.memo || '');
-        setTotalPrice(orderData.totalPrice || 0);
+        setTotalPrice(orderData.totalPrice?.toString() || '');
 
         // 주문 아이템들 설정 (각 아이템의 사용 가능한 단위 정보 포함)
         const itemsWithUnits = (orderData.orderTables || []).map((item: any) => {
@@ -151,6 +168,11 @@ const OrderEditPage = () => {
             availableUnits: availableUnits.length > 0 ? availableUnits : ['kg']
           };
         });
+
+        console.log('=== 주문 아이템 설정 디버깅 ===');
+        console.log('orderData.orderTables:', orderData.orderTables);
+        console.log('itemsWithUnits:', itemsWithUnits);
+        console.log('================================');
 
         setOrderItems(itemsWithUnits);
       } catch (e: any) {
@@ -198,6 +220,13 @@ const OrderEditPage = () => {
       return;
     }
 
+    // 수량 검증
+    const quantity = Number(newItem.quantity);
+    if (!quantity || quantity <= 0) {
+      alert('수량을 올바르게 입력해주세요.');
+      return;
+    }
+
     const product = products.find(p => p.id === newItem.productId);
     if (!product) {
       alert('선택한 떡 정보를 찾을 수 없습니다.');
@@ -214,14 +243,14 @@ const OrderEditPage = () => {
     const itemToAdd: OrderItem = {
       productId: newItem.productId,
       productName: product.name,
-      quantity: newItem.quantity,
+      quantity: quantity,
       unit: availableUnits.includes(newItem.unit) ? newItem.unit : availableUnits[0],
       hasRice: newItem.hasRice,
       availableUnits
     };
 
     setOrderItems([...orderItems, itemToAdd]);
-    setNewItem({ productId: 0, quantity: 1, unit: 'kg', hasRice: false });
+    setNewItem({ productId: 0, quantity: '', unit: 'kg', hasRice: false });
     setShowAddItem(false);
   };
 
@@ -258,12 +287,7 @@ const OrderEditPage = () => {
         customerId = customerFromState.id;
       }
       
-      // 2순위: 주문 데이터에 포함된 고객 정보의 ID
-      if (!customerId && order.customer?.id) {
-        customerId = order.customer.id;
-      }
-      
-      // 3순위: 주문 데이터의 customerId 필드 (이미 위에서 확인했지만 안전장치)
+      // 2순위: 주문 데이터의 customerId 필드 (이미 위에서 확인했지만 안전장치)
       if (!customerId && order.customerId) {
         customerId = order.customerId;
       }
@@ -272,8 +296,7 @@ const OrderEditPage = () => {
       if (!customerId) {
         console.error('Customer ID not found:', {
           orderCustomerId: order.customerId,
-          customerFromState: customerFromState,
-          orderCustomer: order.customer
+          customerFromState: customerFromState
         });
         alert('고객 정보를 찾을 수 없습니다. 주문을 수정할 수 없습니다.');
         return;
@@ -284,13 +307,21 @@ const OrderEditPage = () => {
         memo,
         pickupDate: formattedPickupDate,
         isAllDay: isAllDay, // 하루종일 옵션
-        isPrepaid: isPrepaid, // 사전 결제 여부
-        finalPrice: totalPrice,
-        isPaid: order.isPaid,
+        finalPrice: Number(totalPrice) || calculateTotalPrice(),
+        isPaid: isPrepaid, // 결제 상태를 백엔드의 isPaid 필드로 매핑
         isPickedUp: order.isPickedUp,
         hasRice: orderItems.some(item => item.hasRice), // 전체 주문의 쌀지참 여부
         orderTables: orderTablesPayload,
       };
+
+      console.log('=== 주문 수정 디버깅 ===');
+      console.log('orderId:', orderId);
+      console.log('customerId:', customerId);
+      console.log('customerFromState:', customerFromState);
+      console.log('orderItems:', orderItems);
+      console.log('orderTablesPayload:', orderTablesPayload);
+      console.log('updatedOrderData:', updatedOrderData);
+      console.log('========================');
 
       const res = await fetch(`${ORDERS_API_URL}/${order.orderId}`, {
         method: 'PUT',
@@ -302,12 +333,26 @@ const OrderEditPage = () => {
 
       if (!res.ok) {
         const errorText = await res.text();
+        console.error('주문 수정 실패:', {
+          status: res.status,
+          statusText: res.statusText,
+          errorText: errorText,
+          requestData: updatedOrderData
+        });
         throw new Error(`주문 수정에 실패했습니다: ${errorText}`);
       }
 
       alert('주문이 성공적으로 수정되었습니다.');
+      
+      // 주문 수정 후 부모 컴포넌트에 알림 (데이터 새로고침을 위해)
+      // 브라우저의 storage 이벤트를 사용하여 다른 탭/컴포넌트에 알림
+      window.dispatchEvent(new CustomEvent('orderUpdated', { 
+        detail: { orderId: order.orderId } 
+      }));
+      
       navigate(`/orders/${order.orderId}`);
     } catch (e: any) {
+      console.error('주문 수정 중 오류 발생:', e);
       alert(`오류: ${e.message}`);
     }
   };
@@ -324,17 +369,17 @@ const OrderEditPage = () => {
     return <div className="page-container">주문 정보를 찾을 수 없습니다.</div>;
   }
 
-  const customerInfo = customerFromState || order?.customer || { name: '정보 없음' };
+  const customerInfo = customerFromState || { name: order?.customerName || '정보 없음' };
 
   return (
-    <form className="form-container" onSubmit={handleSubmit}>
-      <h1>주문 수정</h1>
+      <form className="form-container" onSubmit={handleSubmit}>
+        <h1>주문 수정</h1>
       
       {/* 고객 정보 (읽기 전용) */}
-      <div className="form-group readonly">
-        <label>고객명</label>
-        <p>{customerInfo.name || '정보 없음'}</p>
-      </div>
+        <div className="form-group readonly">
+          <label>고객명</label>
+          <p>{customerInfo.name || '정보 없음'}</p>
+        </div>
 
       {/* 주문 아이템들 */}
       <div className="form-group">
@@ -356,12 +401,35 @@ const OrderEditPage = () => {
               <div className="item-controls">
                 <div className="control-group">
                   <label>수량</label>
-                  <input 
-                    type="number" 
-                    value={item.quantity} 
-                    onChange={(e) => handleItemQuantityChange(index, Number(e.target.value))}
-                    min="1"
-                  />
+                  <div className="quantity-input-container">
+                    <input 
+                      type="number" 
+                      value={item.quantity} 
+                      onChange={(e) => handleItemQuantityChange(index, Number(e.target.value))}
+                      min="1"
+                      className="quantity-input-with-spinner"
+                    />
+                    <div className="quantity-spinner-buttons">
+                      <button 
+                        type="button" 
+                        className="quantity-spinner-btn increment"
+                        onClick={() => {
+                          const currentValue = Number(item.quantity) || 0;
+                          handleItemQuantityChange(index, currentValue + 1);
+                        }}
+                      />
+                      <button 
+                        type="button" 
+                        className="quantity-spinner-btn decrement"
+                        onClick={() => {
+                          const currentValue = Number(item.quantity) || 0;
+                          if (currentValue > 1) {
+                            handleItemQuantityChange(index, currentValue - 1);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="control-group">
@@ -446,13 +514,36 @@ const OrderEditPage = () => {
                 
                 <div className="form-group">
                   <label>수량</label>
-                  <input 
-                    type="number" 
-                    value={newItem.quantity} 
-                    onChange={(e) => setNewItem({...newItem, quantity: Number(e.target.value)})}
-                    min="1"
-                  />
-                </div>
+                  <div className="quantity-input-container">
+                    <input 
+                      type="number" 
+                      value={newItem.quantity} 
+                      onChange={(e) => setNewItem({...newItem, quantity: e.target.value})}
+                      min="1"
+                      className="quantity-input-with-spinner"
+                    />
+                    <div className="quantity-spinner-buttons">
+                      <button 
+                        type="button" 
+                        className="quantity-spinner-btn increment"
+                        onClick={() => {
+                          const currentValue = Number(newItem.quantity) || 0;
+                          setNewItem({...newItem, quantity: (currentValue + 1).toString()});
+                        }}
+                      />
+                      <button 
+                        type="button" 
+                        className="quantity-spinner-btn decrement"
+                        onClick={() => {
+                          const currentValue = Number(newItem.quantity) || 0;
+                          if (currentValue > 1) {
+                            setNewItem({...newItem, quantity: (currentValue - 1).toString()});
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+          </div>
                 
                 <div className="form-group">
                   <label>단위</label>
@@ -476,8 +567,8 @@ const OrderEditPage = () => {
                         <option key={unit} value={unit}>{unit}</option>
                       ));
                     })()}
-                  </select>
-                </div>
+            </select>
+          </div>
                 
                 <div className="form-group">
                   <label>쌀지참</label>
@@ -509,29 +600,29 @@ const OrderEditPage = () => {
       </div>
 
       {/* 총 결제금액 */}
-      <div className="form-group">
-        <label htmlFor="totalPrice">총 결제금액</label>
-        <input
-          id="totalPrice"
-          type="number"
-          value={totalPrice}
-          onChange={(e) => setTotalPrice(Number(e.target.value))}
-        />
-      </div>
+        <div className="form-group">
+          <label htmlFor="totalPrice">총 결제금액</label>
+          <input
+              id="totalPrice"
+              type="number"
+              value={totalPrice}
+          onChange={(e) => setTotalPrice(e.target.value)}
+          />
+        </div>
 
       {/* 픽업 날짜 및 시간 */}
-      <div className="form-group">
-        <label>픽업 날짜 및 시간</label>
-        <div className="time-selects">
-          <input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} />
+        <div className="form-group">
+          <label>픽업 날짜 및 시간</label>
+          <div className="time-selects">
+            <input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} />
           <div className="time-controls">
             <div className="time-inputs">
               <select value={pickupHour} onChange={e => setPickupHour(e.target.value)} disabled={isAllDay}>
-                {hours.map(h => <option key={h} value={h}>{h}시</option>)}
-              </select>
+              {hours.map(h => <option key={h} value={h}>{h}시</option>)}
+            </select>
               <select value={pickupMinute} onChange={e => setPickupMinute(e.target.value)} disabled={isAllDay}>
-                {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
-              </select>
+              {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
+            </select>
             </div>
             <div className="all-day-toggle">
               <label className="all-day-checkbox">
@@ -548,7 +639,7 @@ const OrderEditPage = () => {
       </div>
 
       {/* 사전 결제 여부 */}
-      <div className="form-group">
+        <div className="form-group">
         <label>사전 결제 여부</label>
         <div className="prepayment-toggle">
           <button 
@@ -580,7 +671,7 @@ const OrderEditPage = () => {
       </div>
 
       {/* 버튼 */}
-      <div className="form-actions">
+        <div className="form-actions">
         <button 
           type="button" 
           onClick={() => navigate(`/orders/${order.orderId}`, { state: { customerData: customerFromState } })} 
@@ -588,9 +679,9 @@ const OrderEditPage = () => {
         >
           취소
         </button>
-        <button type="submit" className="submit-button">수정 완료</button>
-      </div>
-    </form>
+          <button type="submit" className="submit-button">수정 완료</button>
+        </div>
+      </form>
   );
 };
 

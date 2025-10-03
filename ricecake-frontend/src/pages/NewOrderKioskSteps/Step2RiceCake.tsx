@@ -25,10 +25,9 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCake, setSelectedCake] = useState<RiceCakeType | null>(null);
   const [modalData, setModalData] = useState({
-    quantity: 1,
+    quantity: '',
     unit: 'kg' as Unit,
-    hasRice: false,
-    memo: ''
+    hasRice: false
   });
 
   const cartItems = (orderData as any).orderTable || [];
@@ -96,10 +95,9 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
     
     setSelectedCake(cake);
     setModalData({
-      quantity: 1,
+      quantity: '',
       unit: availableUnits[0], // 첫 번째 사용 가능한 단위로 설정
-      hasRice: false,
-      memo: ''
+      hasRice: false
     });
     setIsModalOpen(true);
   };
@@ -107,15 +105,21 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
   const handleModalConfirm = () => {
     if (!selectedCake) return;
     
+    // 수량 검증
+    const quantity = Number(modalData.quantity);
+    if (!quantity || quantity <= 0) {
+      alert('수량을 올바르게 입력해주세요.');
+      return;
+    }
+    
     const price = getPriceForUnit(selectedCake, modalData.unit);
     const newItem = {
       id: Date.now() + Math.random(), // 고유 ID 생성
       riceCakeId: selectedCake.id,
       riceCakeName: selectedCake.name,
-      quantity: modalData.quantity,
+      quantity: quantity,
       unit: modalData.unit,
       hasRice: modalData.hasRice,
-      memo: modalData.memo,
       price: price
     };
     
@@ -191,7 +195,6 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
                       <p className="item-details">
                         {item.quantity}{item.unit} 
                         {item.hasRice && <span className="rice-indicator"> (쌀지참)</span>}
-                        {item.memo && <span className="memo-indicator"> - {item.memo}</span>}
                       </p>
                     </div>
                     <button onClick={() => removeFromCart(item.id)} className="remove-btn">×</button>
@@ -216,12 +219,36 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
             <div className="modal-body">
               <div className="form-group">
                 <label>수량</label>
-                <input 
-                  type="number" 
-                  value={modalData.quantity} 
-                  onChange={(e) => setModalData(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-                  min="1"
-                />
+                <div className="quantity-input-container">
+                  <input 
+                    type="number" 
+                    value={modalData.quantity} 
+                    onChange={(e) => setModalData(prev => ({ ...prev, quantity: e.target.value }))}
+                    placeholder="수량을 입력하세요"
+                    min="1"
+                    className="quantity-input-with-spinner"
+                  />
+                  <div className="quantity-spinner-buttons">
+                    <button 
+                      type="button" 
+                      className="quantity-spinner-btn increment"
+                      onClick={() => {
+                        const currentValue = Number(modalData.quantity) || 0;
+                        setModalData(prev => ({ ...prev, quantity: (currentValue + 1).toString() }));
+                      }}
+                    />
+                    <button 
+                      type="button" 
+                      className="quantity-spinner-btn decrement"
+                      onClick={() => {
+                        const currentValue = Number(modalData.quantity) || 0;
+                        if (currentValue > 1) {
+                          setModalData(prev => ({ ...prev, quantity: (currentValue - 1).toString() }));
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="form-group">
                 <label>단위</label>
@@ -252,14 +279,6 @@ const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep
                     쌀 없음
                   </button>
                 </div>
-              </div>
-              <div className="form-group">
-                <label>메모</label>
-                <textarea 
-                  value={modalData.memo} 
-                  onChange={(e) => setModalData(prev => ({ ...prev, memo: e.target.value }))}
-                  placeholder="특별한 요청사항이 있다면 입력하세요"
-                />
               </div>
             </div>
             <div className="modal-footer">

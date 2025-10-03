@@ -12,7 +12,7 @@ const NewOrderPage = () => {
   // 폼 필드들의 상태를 관리합니다.
   const [customerName, setCustomerName] = useState('');
   const [riceCakeType, setRiceCakeType] = useState('송편');
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState('');
   const [unit, setUnit] = useState<Unit>('kg'); // 단위 상태 추가
   const [hasRice, setHasRice] = useState(true); // 쌀 지참 여부 상태 추가 (기본값: 있음)
   const [pickupDate, setPickupDate] = useState('');
@@ -27,13 +27,20 @@ const NewOrderPage = () => {
       return;
     }
 
+    // 수량 검증
+    const quantityValue = Number(quantity);
+    if (!quantityValue || quantityValue <= 0) {
+      alert('수량을 올바르게 입력해주세요.');
+      return;
+    }
+
     try {
       // API로 주문 생성
       const newOrder = {
         customerName,
         orderTable: [{
           riceCakeName: riceCakeType,
-          quantity,
+          quantity: quantityValue,
           unit,
           hasRice
         }],
@@ -85,7 +92,36 @@ const NewOrderPage = () => {
       <div className="form-group quantity-group">
         <div className="quantity-input">
           <label htmlFor="quantity">수량</label>
-          <input id="quantity" type="number" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+          <div className="quantity-input-container">
+            <input 
+              id="quantity" 
+              type="number" 
+              value={quantity} 
+              onChange={(e) => setQuantity(e.target.value)} 
+              placeholder="수량을 입력하세요"
+              className="quantity-input-with-spinner"
+            />
+            <div className="quantity-spinner-buttons">
+              <button 
+                type="button" 
+                className="quantity-spinner-btn increment"
+                onClick={() => {
+                  const currentValue = Number(quantity) || 0;
+                  setQuantity((currentValue + 1).toString());
+                }}
+              />
+              <button 
+                type="button" 
+                className="quantity-spinner-btn decrement"
+                onClick={() => {
+                  const currentValue = Number(quantity) || 0;
+                  if (currentValue > 1) {
+                    setQuantity((currentValue - 1).toString());
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
         <div className="unit-select">
           <label htmlFor="unit">단위</label>

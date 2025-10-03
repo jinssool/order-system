@@ -5,7 +5,7 @@
     border-radius: 12px;
     padding: 16px 20px;
     display: grid;
-    grid-template-columns: 130px 1fr auto;
+    grid-template-columns: 60px 130px 1fr auto;
     align-items: center;
     gap: 20px;
     transition: all 0.2s ease-in-out;
@@ -15,6 +15,60 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #007bff;
+  }
+
+  /* 주문 번호 스타일 */
+  .card-order-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .order-number {
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+  }
+
+  /* 고객 정보 스타일 */
+  .customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .customer-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #343a40;
+    margin: 0;
+  }
+
+  /* 떡 정보 스타일 */
+  .rice-cake-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rice-cake-name {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #495057;
+    margin: 0;
+  }
+
+  .additional-items {
+    font-size: 0.9em;
+    color: #6c757d;
   }
   
   /* 링크 방문 기록 색상 문제 해결 */
