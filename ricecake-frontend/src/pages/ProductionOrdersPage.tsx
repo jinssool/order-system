@@ -32,14 +32,14 @@ const calculateOrderNumbers = (orders: any[]) => {
     const sameDateOrders = ordersByPickupDate[pickupDate];
     
     // 같은 픽업 날짜의 주문들을 생성 시간 순으로 정렬
-    const sortedSameDateOrders = sameDateOrders.sort((a, b) => {
+    const sortedSameDateOrders = sameDateOrders.sort((a: any, b: any) => {
       const dateA = new Date(a.orderDate || a.createdAt || 0);
       const dateB = new Date(b.orderDate || b.createdAt || 0);
       return dateA.getTime() - dateB.getTime();
     });
     
     // 현재 주문의 순서 찾기
-    const orderNumber = sortedSameDateOrders.findIndex(o => o.orderId === order.orderId) + 1;
+    const orderNumber = sortedSameDateOrders.findIndex((o: any) => o.orderId === order.orderId) + 1;
     
     return {
       ...order,

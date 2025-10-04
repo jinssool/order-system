@@ -25,7 +25,7 @@ const RiceCakeNewPage = () => {
         const newUnit = availableUnits.find(unit => !usedUnits.includes(unit));
         
         if (newUnit) {
-            setUnitPrices([...unitPrices, { unit: newUnit, price: '' }]);
+            setUnitPrices([...unitPrices, { unit: newUnit, price: 0 }]);
         }
     };
 

@@ -48,4 +48,5 @@ export interface Order {
   hasRice: boolean;
   isAllDay?: boolean; // 하루종일 옵션
   memo?: string;
+  orderNumber?: number; // 주문 번호 (프론트엔드에서 계산)
 }
