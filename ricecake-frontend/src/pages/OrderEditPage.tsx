@@ -84,10 +84,14 @@ const OrderEditPage = () => {
     }, 0);
   };
 
-  // 가격이 변경될 때마다 자동 계산
+  // 가격이 변경될 때마다 자동 계산 (수동 입력된 가격이 없을 때만)
   useEffect(() => {
     const calculatedPrice = calculateTotalPrice();
-    setTotalPrice(calculatedPrice.toString());
+    // 수동으로 입력된 가격이 없거나 0일 때만 자동 계산값 사용
+    const currentPrice = Number(totalPrice);
+    if (currentPrice === 0 || totalPrice === '' || totalPrice === calculatedPrice.toString()) {
+      setTotalPrice(calculatedPrice.toString());
+    }
   }, [orderItems, products]);
 
   useEffect(() => {

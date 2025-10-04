@@ -133,7 +133,10 @@ const OrderDetailPage = () => {
     }
   };
 
-  const customerInfo = customerFromState || order.customer || {};
+  const customerInfo = customerFromState || (order?.customerId ? {
+    id: order.customerId,
+    name: order.customerName || '정보 없음'
+  } : {});
 
   return (
       <div className="page-container detail-page-final">
