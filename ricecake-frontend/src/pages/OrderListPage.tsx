@@ -102,7 +102,7 @@ const OrderListPage = () => {
         return {
           ...order,
           pickupDate: pickupDateTime.date,
-          pickupTime: order.isAllDay ? '하루종일' : pickupDateTime.time,
+          pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
           customerName: customerName,
           isDelivered: order.isPickedUp,
           // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
@@ -166,7 +166,7 @@ const OrderListPage = () => {
           return {
             ...order,
             pickupDate: pickupDateTime.date,
-            pickupTime: order.isAllDay ? '하루종일' : pickupDateTime.time,
+            pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
             customerName: customerName,
             isDelivered: order.isPickedUp,
             // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
@@ -232,7 +232,7 @@ const OrderListPage = () => {
             return {
               ...order,
               pickupDate: pickupDateTime.date,
-              pickupTime: order.isAllDay ? '하루종일' : pickupDateTime.time,
+              pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
               customerName: customerName,
               isDelivered: order.isPickedUp,
               items: (order.products || []).map((product: any) => ({
