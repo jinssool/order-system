@@ -5,7 +5,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './ProductionPage.css';
 
-const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
+const ORDERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders';
 
 interface OrderItem {
   riceCakeId: number;

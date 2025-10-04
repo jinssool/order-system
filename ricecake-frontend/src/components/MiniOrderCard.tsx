@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { Order } from "../types";
 import './MiniOrderCard.css';
 
-const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
+const ORDERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders';
 
 interface MiniOrderCardProps {
   order: Order;

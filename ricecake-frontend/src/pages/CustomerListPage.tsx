@@ -29,7 +29,7 @@ const CustomerListPage = () => {
 
       // 2. GET 요청은 body를 사용하지 않으므로, URL에 파라미터를 직접 추가합니다.
       try {
-        const url = `http://localhost:8080/api-v1/customers?${params.toString()}`;
+        const url = `https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/customers?${params.toString()}`;
         const res = await fetch(url, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },

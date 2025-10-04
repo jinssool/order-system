@@ -13,7 +13,7 @@ interface StepProps {
 }
 
 const CONSONANTS = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
-const PRODUCTS_API_URL = 'http://localhost:8080/api-v1/products';
+const PRODUCTS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/products';
 
 const Step2_RiceCake = ({ orderData, updateOrderData, goToNextStep, goToPrevStep }: StepProps) => {
   const [riceCakes, setRiceCakes] = useState<RiceCakeType[]>([]);

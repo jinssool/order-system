@@ -4,8 +4,8 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import type { Unit, Order } from '../types';
 import './FormPage.css';
 
-const ORDERS_API_URL = 'http://localhost:8080/api-v1/orders';
-const PRODUCTS_API_URL = 'http://localhost:8080/api-v1/products';
+const ORDERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders';
+const PRODUCTS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/products';
 
 const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
