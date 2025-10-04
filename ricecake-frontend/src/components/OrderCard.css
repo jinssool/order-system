@@ -46,8 +46,8 @@
   }
 
   .customer-name {
-    font-size: 1.1em;
-    font-weight: bold;
+    font-size: 1.8em;
+    font-weight: 700;
     color: #343a40;
     margin: 0;
   }
@@ -78,8 +78,7 @@
   }
   
   /* 카드 내부 요소 스타일 */
-  .card-left .pickup-time { font-size: 1.8em; font-weight: 700; margin: 0; color: #343a40; }
-  .card-left .customer-name { font-size: 1.2em; color: #495057; margin: 4px 0 0; }
+  .card-left .pickup-time { font-size: 1.2em; font-weight: 500; margin: 4px 0 0; color: #495057; }
   .card-middle .rice-cake-info { font-size: 1.5em; margin: 0; font-weight: 500; color: #343a40; }
   .card-middle .rice-cake-info span { color: #007bff; font-weight: bold; margin-left: 10px; }
   .card-right .status-tags-inline { display: flex; gap: 8px; align-items: center; }

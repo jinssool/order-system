@@ -13,7 +13,7 @@ import './CalendarView.css';
 
 const ORDERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders';
 
-type SortType = 'time' | 'cake' | 'status' | 'orderNumber';
+type SortType = 'time' | 'cake' | 'status' | 'orderNumber' | 'customerName';
 
 // 주문 번호 계산 함수 (픽업 날짜별로 생성 순서대로 번호 부여)
 const calculateOrderNumbers = (orders: any[]) => {
@@ -314,16 +314,17 @@ const OrderListPage = () => {
     }
 
     switch (sortType) {
+      case 'customerName':
+        return filtered.sort((a, b) =>
+            (a.customerName || '').localeCompare(b.customerName || '')
+        );
       case 'cake':
         return filtered.sort((a, b) =>
             (a.items?.[0]?.riceCakeName || '').localeCompare(b.items?.[0]?.riceCakeName || '')
         );
       case 'status':
         return filtered.sort((a, b) => Number(a.isDelivered) - Number(b.isDelivered));
-      case 'orderNumber':
-        return filtered.sort((a, b) => (a.orderNumber || 0) - (b.orderNumber || 0));
       case 'time':
-      default:
         return filtered.sort((a, b) => {
           // 하루종일 주문을 맨 위에 배치
           if (a.pickupTime === '하루종일' && b.pickupTime !== '하루종일') return -1;
@@ -333,6 +334,9 @@ const OrderListPage = () => {
           // 일반 주문은 시간순으로 정렬
           return (a.pickupTime || '').localeCompare(b.pickupTime || '');
         });
+      case 'orderNumber':
+      default:
+        return filtered.sort((a, b) => (a.orderNumber || 0) - (b.orderNumber || 0));
     }
   }, [ordersForSelectedDate, sortType, searchQuery]);
 
@@ -397,10 +401,11 @@ const OrderListPage = () => {
               />
               <div className="sort-options">
                 <span>정렬:</span>
+                <button className={sortType === 'orderNumber' ? 'active' : ''} onClick={() => setSortType('orderNumber')}>주문 번호순</button>
+                <button className={sortType === 'customerName' ? 'active' : ''} onClick={() => setSortType('customerName')}>고객명순</button>
                 <button className={sortType === 'time' ? 'active' : ''} onClick={() => setSortType('time')}>시간순</button>
                 <button className={sortType === 'cake' ? 'active' : ''} onClick={() => setSortType('cake')}>떡 종류순</button>
                 <button className={sortType === 'status' ? 'active' : ''} onClick={() => setSortType('status')}>수령 여부순</button>
-                <button className={sortType === 'orderNumber' ? 'active' : ''} onClick={() => setSortType('orderNumber')}>주문 번호순</button>
               </div>
             </div>
           </div>

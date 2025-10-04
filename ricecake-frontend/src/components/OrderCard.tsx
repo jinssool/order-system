@@ -63,7 +63,6 @@ const OrderCard = ({ order, onStatusChange, searchQuery, searchReasons }: OrderC
                 <span className="order-number">{order.orderNumber || '?'}</span>
             </div>
             <div className="card-left">
-                <p className="pickup-time">{order.pickupTime}</p>
                 <div className="customer-info">
                     <SearchHighlight 
                         text={order.customerName || '알 수 없음'} 
@@ -74,6 +73,7 @@ const OrderCard = ({ order, onStatusChange, searchQuery, searchReasons }: OrderC
                         <SearchReasonTags reasons={searchReasons} />
                     )}
                 </div>
+                <p className="pickup-time">{order.pickupTime}</p>
             </div>
             <div className="card-middle">
                 <div className="rice-cake-info">
