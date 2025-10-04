@@ -19,9 +19,11 @@ jobs:
         run: |
           cd ricecake-frontend
           npm run build
-      - name: Move build to root
+      - name: Move build and firebase config to root
         run: |
           mv ricecake-frontend/dist ./
+          mv ricecake-frontend/firebase.json ./
+          mv ricecake-frontend/.firebaserc ./
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
