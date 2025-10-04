@@ -1,10 +1,9 @@
 // src/pages/ProductionPage.tsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './ProductionPage.css';
-import './ProductionCalendarView.css';
 
 const ORDERS_API_URL = 'https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders';
 
@@ -51,6 +50,7 @@ const ProductionPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'rice'>('name');
   const [showCalendar, setShowCalendar] = useState(false);
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -71,6 +71,54 @@ const ProductionPage = () => {
     };
     fetchOrders();
   }, []);
+
+  // 주문 업데이트 이벤트 리스너 추가
+  useEffect(() => {
+    const handleOrderUpdate = () => {
+      console.log('생산 계획 페이지: 주문 업데이트 이벤트 수신, 데이터 새로고침 중...');
+      const fetchOrders = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const res = await fetch(`${ORDERS_API_URL}?page=0&size=1000`);
+          if (!res.ok) {
+            throw new Error('주문 목록을 불러오는 데 실패했습니다.');
+          }
+          const data = await res.json();
+          setOrders(data.content || []);
+        } catch (e: any) {
+          setError(e.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchOrders();
+    };
+
+    window.addEventListener('orderUpdated', handleOrderUpdate);
+    
+    return () => {
+      window.removeEventListener('orderUpdated', handleOrderUpdate);
+    };
+  }, []);
+
+  // 캘린더 표시 상태 디버깅
+  useEffect(() => {
+    if (showCalendar && calendarRef.current) {
+      console.log('캘린더 DOM 요소:', calendarRef.current);
+      console.log('캘린더 내부 요소들:', calendarRef.current.querySelectorAll('*'));
+      
+      // react-calendar 요소 확인
+      const reactCalendar = calendarRef.current.querySelector('.react-calendar');
+      console.log('react-calendar 요소:', reactCalendar);
+      
+      if (reactCalendar) {
+        console.log('캘린더 네비게이션:', reactCalendar.querySelector('.react-calendar__navigation'));
+        console.log('캘린더 월 뷰:', reactCalendar.querySelector('.react-calendar__month-view'));
+        console.log('캘린더 날짜들:', reactCalendar.querySelectorAll('.react-calendar__tile'));
+      }
+    }
+  }, [showCalendar]);
 
   const selectedDateString = useMemo(() => {
     // 한국 시간 기준으로 날짜 문자열 생성
@@ -226,22 +274,30 @@ const ProductionPage = () => {
           >
             오늘
           </button>
-          <div className="calendar-icon" onClick={() => setShowCalendar(!showCalendar)}>
+          <div className="calendar-icon" onClick={() => {
+            console.log('캘린더 토글:', !showCalendar);
+            setShowCalendar(!showCalendar);
+          }}>
             📅
           </div>
           {showCalendar && (
-            <div className="calendar-container">
+            <div 
+              ref={calendarRef}
+              className="production-calendar-container"
+              onLoad={() => console.log('캘린더 컨테이너 로드됨')}
+            >
               <Calendar
                 onChange={(date) => {
+                  console.log('날짜 선택됨:', date);
                   handleDateChange(date as Date);
                   setShowCalendar(false);
                 }}
                 value={selectedDate}
                 locale="ko"
-                calendarType="hebrew"
                 formatDay={(_, date) => date.getDate().toString()}
                 formatMonthYear={(_, date) => `${date.getFullYear()}년 ${date.getMonth() + 1}월`}
                 formatShortWeekday={(_, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
+                onActiveStartDateChange={() => console.log('캘린더 활성 날짜 변경됨')}
               />
             </div>
           )}

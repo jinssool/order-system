@@ -87,7 +87,7 @@ const RiceCakeEditPage = () => {
         if (!cakeId) return;
         
         // 최소 하나의 단위는 가격이 설정되어야 함
-        const hasValidPrice = unitPrices.some(up => up.price > 0);
+        const hasValidPrice = unitPrices.some(up => Number(up.price) > 0);
         if (!hasValidPrice) {
             alert('최소 하나의 단위에 가격을 설정해주세요.');
             return;
@@ -96,11 +96,11 @@ const RiceCakeEditPage = () => {
         try {
             const updatedCake = {
                 name,
-                pricePerKg: unitPrices.find(up => up.unit === 'kg')?.price || null,
-                pricePerDoe: unitPrices.find(up => up.unit === '되')?.price || null,
-                pricePerMal: unitPrices.find(up => up.unit === '말')?.price || null,
-                pricePerPiece: unitPrices.find(up => up.unit === '개')?.price || null,
-                pricePerPack: unitPrices.find(up => up.unit === '팩')?.price || null,
+                pricePerKg: Number(unitPrices.find(up => up.unit === 'kg')?.price) || null,
+                pricePerDoe: Number(unitPrices.find(up => up.unit === '되')?.price) || null,
+                pricePerMal: Number(unitPrices.find(up => up.unit === '말')?.price) || null,
+                pricePerPiece: Number(unitPrices.find(up => up.unit === '개')?.price) || null,
+                pricePerPack: Number(unitPrices.find(up => up.unit === '팩')?.price) || null,
             };
 
             const res = await fetch(`${API_URL}/${cakeId}`, {
@@ -151,7 +151,7 @@ const RiceCakeEditPage = () => {
                             <input 
                                 type="number" 
                                 value={unitPrice.price} 
-                                onChange={e => updateUnitPrice(index, 'price', Number(e.target.value))}
+                                onChange={e => updateUnitPrice(index, 'price', e.target.value)}
                                 placeholder="가격 입력"
                                 min="0"
                                 className="price-input"

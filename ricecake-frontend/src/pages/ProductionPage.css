@@ -89,6 +89,142 @@
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+/* 생산계획 페이지 전용 캘린더 스타일 */
+.production-calendar-container {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  width: 320px;
+  height: 380px;
+  max-width: calc(100vw - 40px);
+  padding: 16px;
+  overflow: hidden;
+}
+
+.production-calendar-container .react-calendar {
+  width: 100% !important;
+  height: 100% !important;
+  border: none;
+  background: white;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.production-calendar-container .react-calendar__navigation {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  height: 35px;
+}
+
+.production-calendar-container .react-calendar__navigation button {
+  display: block !important;
+  background: none;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.production-calendar-container .react-calendar__navigation button:hover {
+  background-color: #f0f0f0;
+}
+
+.production-calendar-container .react-calendar__navigation__label {
+  display: block !important;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+}
+
+.production-calendar-container .react-calendar__navigation__arrow {
+  display: block !important;
+  font-size: 1.2em;
+  color: #007bff;
+}
+
+.production-calendar-container .react-calendar__navigation__prev-button,
+.production-calendar-container .react-calendar__navigation__next-button {
+  display: block !important;
+}
+
+/* 삭제 버튼과 연도 단위 이동 버튼만 숨기기 */
+.production-calendar-container button[aria-label*="삭제"],
+.production-calendar-container button[aria-label*="Delete"],
+.production-calendar-container .react-calendar__navigation__prev2-button,
+.production-calendar-container .react-calendar__navigation__next2-button {
+  display: none !important;
+}
+
+.production-calendar-container .react-calendar__tile {
+  height: 45px !important;
+  font-size: 0.9em !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.production-calendar-container .react-calendar__tile--active,
+.production-calendar-container .react-calendar__tile:enabled:hover,
+.production-calendar-container .react-calendar__tile:enabled:focus {
+  background-color: #007bff;
+  color: white;
+}
+
+.production-calendar-container .react-calendar__month-view__weekdays {
+  display: flex !important;
+}
+
+.production-calendar-container .react-calendar__month-view__weekdays__weekday {
+  flex: 1;
+  text-align: center;
+}
+
+.production-calendar-container .react-calendar__month-view__weekdays abbr {
+  font-size: 0.9em;
+  font-weight: 600;
+  text-decoration: none;
+  color: #333;
+}
+
+.production-calendar-container .react-calendar__month-view__days {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.production-calendar-container .react-calendar__month-view__days__day {
+  flex: 0 0 calc(100% / 7) !important;
+  text-align: center;
+}
+
+/* 요일 색상 설정 */
+.production-calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(1) {
+  color: #dc3545; /* 일요일 */
+}
+
+.production-calendar-container .react-calendar__month-view__weekdays__weekday:nth-child(7) {
+  color: #dc3545; /* 토요일 */
+}
+
+.production-calendar-container .react-calendar__month-view__days__day:nth-child(7n+1) {
+  color: #dc3545; /* 일요일 */
+}
+
+.production-calendar-container .react-calendar__month-view__days__day:nth-child(7n) {
+  color: #dc3545; /* 토요일 */
+}
+
 /* 제작현황 페이지에서 달력 팝업의 삭제 버튼 숨기기 */
 .production-page input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;

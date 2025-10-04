@@ -112,11 +112,20 @@ const OrderDetailPage = () => {
   const formatPickupDate = (pickupDate: string) => {
     try {
       const date = new Date(pickupDate);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
+      // +9시간 추가 (로컬 테스트용 - 주문 리스트와 일관성 유지)
+      const adjustedTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
+      
+      const year = adjustedTime.getFullYear();
+      const month = String(adjustedTime.getMonth() + 1).padStart(2, '0');
+      const day = String(adjustedTime.getDate()).padStart(2, '0');
+      
+      // isAllDay가 true인 경우 "하루종일"로 표시
+      if (order.isAllDay) {
+        return `${year}년 ${month}월 ${day}일 하루종일`;
+      }
+      
+      const hours = String(adjustedTime.getHours()).padStart(2, '0');
+      const minutes = String(adjustedTime.getMinutes()).padStart(2, '0');
       
       return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
     } catch (error) {

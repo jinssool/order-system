@@ -25,8 +25,10 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
   const [pickupDate, setPickupDate] = useState(new Date());
   const [pickupHour, setPickupHour] = useState('10');
   const [pickupMinute, setPickupMinute] = useState('00');
+  const [isAllDay, setIsAllDay] = useState(false); // 하루종일 옵션 (UI용)
+  const [isPrepaid, setIsPrepaid] = useState(false); // 결제 여부
   const [memo, setMemo] = useState((orderData as any).memo || '');
-  const [editablePrice, setEditablePrice] = useState(0);
+  const [editablePrice, setEditablePrice] = useState('');
   
   // 모달 상태
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
@@ -41,6 +43,8 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
       setPickupHour(hour);
       setPickupMinute(minute);
     }
+    setIsAllDay((orderData as any).isAllDay || false);
+    setIsPrepaid((orderData as any).isPrepaid || false);
   }, [orderData]);
 
   const cartItems = (orderData as any).orderTable || [];
@@ -51,12 +55,21 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
   }, 0);
 
   useEffect(() => {
-    // 계산된 금액으로 초기화
-    setEditablePrice(finalPrice);
+    // 계산된 금액으로 초기화 (빈 값이 아닐 때만)
+    if (editablePrice === '') {
+      setEditablePrice(finalPrice.toString());
+    }
   }, [finalPrice]);
 
   const handleSaveOrder = async () => {
-    const pickupDateTime = `${getYYYYMMDD(pickupDate)}T${pickupHour}:${pickupMinute}:00`;
+    // 한국 시간대(UTC+9)를 고려한 날짜 생성
+    const year = pickupDate.getFullYear();
+    const month = String(pickupDate.getMonth() + 1).padStart(2, '0');
+    const day = String(pickupDate.getDate()).padStart(2, '0');
+    
+    const formattedPickupDate = isAllDay 
+      ? `${year}-${month}-${day}T00:00:00` // 하루종일인 경우 00:00으로 설정
+      : `${year}-${month}-${day}T${pickupHour}:${pickupMinute}:00`;
 
     // 백엔드 API 스키마에 맞는 orderTables 배열을 생성합니다.
     const orderTablesForApi = (cartItems || []).map((item: any) => ({
@@ -66,20 +79,47 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
       hasRice: item.hasRice
     }));
 
+    // 데이터 검증
+    if (!(orderData as any).customerId) {
+      alert('고객 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
+      return;
+    }
+    
+    if (!orderTablesForApi || orderTablesForApi.length === 0) {
+      alert('떡 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
+      return;
+    }
+    
+    const finalPriceValue = Number(editablePrice) || finalPrice;
+    if (!finalPriceValue || finalPriceValue <= 0) {
+      alert('가격 정보가 올바르지 않습니다. 가격을 확인해주세요.');
+      return;
+    }
+
     const finalOrderData = {
       customerId: (orderData as any).customerId,
-      pickupDate: pickupDateTime,
+      pickupDate: formattedPickupDate,
       memo: memo,
-      finalPrice: editablePrice,
-      isPaid: false,
+      finalPrice: finalPriceValue, // 검증된 가격 사용
+      isPaid: isPrepaid, // 결제 여부
       isPickedUp: false,
+      hasRice: orderTablesForApi.some((item: any) => item.hasRice), // 전체 주문의 쌀지참 여부
+      isAllDay: isAllDay, // 하루종일 옵션
       orderTables: orderTablesForApi
     };
 
-    console.log(finalOrderData); // 최종 데이터 확인
-
-    if (!finalOrderData.customerId || !finalOrderData.orderTables || finalOrderData.orderTables.length === 0) {
-      alert('고객 또는 떡 정보가 누락되었습니다. 이전 단계로 돌아가 다시 선택해주세요.');
+    console.log('=== 주문 데이터 디버깅 ===');
+    console.log('orderData:', orderData);
+    console.log('cartItems:', cartItems);
+    console.log('orderTablesForApi:', orderTablesForApi);
+    console.log('finalPrice:', finalPrice);
+    console.log('editablePrice:', editablePrice);
+    console.log('isPrepaid:', isPrepaid);
+    console.log('finalOrderData:', finalOrderData);
+    console.log('========================');
+    
+    if (!finalOrderData.pickupDate) {
+      alert('픽업 날짜가 설정되지 않았습니다.');
       return;
     }
 
@@ -95,9 +135,16 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
         navigate('/');
       } else {
         const errorText = await res.text();
+        console.error('주문 저장 실패:', {
+          status: res.status,
+          statusText: res.statusText,
+          errorText: errorText,
+          requestData: finalOrderData
+        });
         throw new Error(`주문 저장에 실패했습니다: ${errorText}`);
       }
     } catch (e: any) {
+      console.error('주문 저장 중 오류 발생:', e);
       alert(`오류: ${e.message}`);
     }
   };
@@ -128,10 +175,43 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
               tabIndex={0}
             >
               <h3>픽업 시간</h3>
-              <p>{pickupHour}:{pickupMinute}</p>
+              <p>{isAllDay ? '하루종일' : `${pickupHour}:${pickupMinute}`}</p>
               <span className="card-indicator">클릭하여 변경</span>
             </div>
           </div>
+          
+          {/* 하루종일 옵션 */}
+          <div className="form-group all-day-group">
+            <label className="all-day-checkbox">
+              <input 
+                type="checkbox" 
+                checked={isAllDay} 
+                onChange={(e) => setIsAllDay(e.target.checked)}
+              />
+              <span>하루종일 픽업</span>
+            </label>
+          </div>
+          
+                 {/* 결제 여부 */}
+                 <div className="form-group prepayment-group">
+                   <label>결제 여부</label>
+                   <div className="prepayment-toggle">
+                     <button 
+                       type="button" 
+                       className={isPrepaid ? 'active' : ''} 
+                       onClick={() => setIsPrepaid(true)}
+                     >
+                       결제 완료
+                     </button>
+                     <button 
+                       type="button" 
+                       className={!isPrepaid ? 'active' : ''} 
+                       onClick={() => setIsPrepaid(false)}
+                     >
+                       미결제
+                     </button>
+                   </div>
+                 </div>
         
         <div className="form-group memo-group">
           <label htmlFor="memo">메모</label>
@@ -145,8 +225,9 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
               id="totalPrice"
               type="number" 
               value={editablePrice} 
-              onChange={(e) => setEditablePrice(Number(e.target.value))}
+              onChange={(e) => setEditablePrice(e.target.value)}
               className="price-input"
+              placeholder="가격을 입력하세요"
             />
             <span className="price-unit">원</span>
           </div>
@@ -230,12 +311,22 @@ const Step3_Confirm = ({ orderData, goToPrevStep }: StepProps) => {
             <div className="modal-body">
               <div className="time-picker-modal">
                 <div className="time-selects">
-                  <select value={pickupHour} onChange={e => setPickupHour(e.target.value)}>
+                  <select value={pickupHour} onChange={e => setPickupHour(e.target.value)} disabled={isAllDay}>
                     {hours.map(h => <option key={h} value={h}>{h}시</option>)}
                   </select>
-                  <select value={pickupMinute} onChange={e => setPickupMinute(e.target.value)}>
+                  <select value={pickupMinute} onChange={e => setPickupMinute(e.target.value)} disabled={isAllDay}>
                     {minutes.map(m => <option key={m} value={m}>{m}분</option>)}
                   </select>
+                </div>
+                <div className="all-day-toggle-modal">
+                  <label className="all-day-checkbox">
+                    <input 
+                      type="checkbox" 
+                      checked={isAllDay} 
+                      onChange={(e) => setIsAllDay(e.target.checked)}
+                    />
+                    <span>하루종일</span>
+                  </label>
                 </div>
               </div>
             </div>

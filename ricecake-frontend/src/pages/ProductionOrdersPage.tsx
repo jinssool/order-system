@@ -14,6 +14,42 @@ interface ProductionOrderState {
   selectedDate: string;
 }
 
+// 주문 번호 계산 함수 (픽업 날짜별로 생성 순서대로 번호 부여)
+const calculateOrderNumbers = (orders: any[]) => {
+  // 픽업 날짜별로 그룹화
+  const ordersByPickupDate = orders.reduce((acc, order) => {
+    const pickupDate = order.pickupDate;
+    if (!acc[pickupDate]) {
+      acc[pickupDate] = [];
+    }
+    acc[pickupDate].push(order);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  // 각 픽업 날짜별로 주문 생성 시간 순으로 정렬하고 번호 부여
+  const ordersWithNumbers = orders.map(order => {
+    const pickupDate = order.pickupDate;
+    const sameDateOrders = ordersByPickupDate[pickupDate];
+    
+    // 같은 픽업 날짜의 주문들을 생성 시간 순으로 정렬
+    const sortedSameDateOrders = sameDateOrders.sort((a, b) => {
+      const dateA = new Date(a.orderDate || a.createdAt || 0);
+      const dateB = new Date(b.orderDate || b.createdAt || 0);
+      return dateA.getTime() - dateB.getTime();
+    });
+    
+    // 현재 주문의 순서 찾기
+    const orderNumber = sortedSameDateOrders.findIndex(o => o.orderId === order.orderId) + 1;
+    
+    return {
+      ...order,
+      orderNumber
+    };
+  });
+
+  return ordersWithNumbers;
+};
+
 const ProductionOrdersPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,7 +90,9 @@ const ProductionOrdersPage = () => {
         
         console.log('Filtered orders:', filteredOrders);
         
-        setOrders(filteredOrders);
+        // 주문 번호 계산하여 추가
+        const ordersWithNumbers = calculateOrderNumbers(filteredOrders);
+        setOrders(ordersWithNumbers);
       } catch (e: any) {
         setError(e.message);
       } finally {
@@ -125,6 +163,9 @@ const ProductionOrdersPage = () => {
                   onClick={() => navigate(`/orders/${order.orderId}`)}
                   style={{ cursor: 'pointer' }}
                 >
+                  <div className="order-number">
+                    <span className="order-number-badge">{order.orderNumber || '?'}</span>
+                  </div>
                   <div className="order-info">
                     <div className="customer-name">{order.customerName}</div>
                     <div className="tteok-details">
