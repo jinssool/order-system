@@ -11,7 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm run build
+      - name: Install dependencies
+        run: |
+          cd ricecake-frontend
+          npm ci
+      - name: Build project
+        run: |
+          cd ricecake-frontend
+          npm run build
+      - name: Move build to root
+        run: |
+          mv ricecake-frontend/dist ./
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
