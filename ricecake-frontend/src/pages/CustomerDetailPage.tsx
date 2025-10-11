@@ -11,6 +11,9 @@ const CustomerDetailPage = () => {
   const [customerOrders, setCustomerOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const handleBackToList = () => {
+    navigate('/');
+  };
 
   // [NEW] 픽업 시간 포맷팅 유틸리티 함수 (OrderDetailPage.tsx의 로직을 재사용)
   const formatPickupDate = (order: any) => {
@@ -240,7 +243,9 @@ const CustomerDetailPage = () => {
       <div className="page-container detail-page">
         <div className="detail-page-header">
           <h1>고객 상세 정보</h1>
-          <button onClick={() => navigate(-1)} className="back-button">‹ 목록으로</button>
+          <button onClick={handleBackToList} className="back-button">
+            ‹ 목록으로 돌아가기
+          </button>
         </div>
 
         <div className="detail-page-grid">

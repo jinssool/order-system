@@ -16,6 +16,9 @@ const OrderDetailPage = () => {
 
   const customerFromState = location.state?.customerData;
   console.log(customerFromState);
+  const handleBackToList = () => {
+    navigate('/');
+  };
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -140,7 +143,7 @@ const OrderDetailPage = () => {
       <div className="page-container detail-page-final">
         <div className="detail-header">
           <h1>주문 상세 정보</h1>
-          <button onClick={() => navigate(-1)} className="back-button">‹ 목록으로 돌아가기</button>
+          <button onClick={handleBackToList} className="back-button">‹ 목록으로 돌아가기</button>
         </div>
         <div className="detail-grid-container">
           <div className="info-column">
