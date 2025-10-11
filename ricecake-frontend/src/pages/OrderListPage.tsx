@@ -31,17 +31,17 @@ const calculateOrderNumbers = (orders: any[]) => {
   const ordersWithNumbers = orders.map(order => {
     const pickupDate = order.pickupDate;
     const sameDateOrders = ordersByPickupDate[pickupDate];
-    
+
     // 같은 픽업 날짜의 주문들을 생성 시간 순으로 정렬
     const sortedSameDateOrders = sameDateOrders.sort((a: any, b: any) => {
       const dateA = new Date(a.orderDate || a.createdAt || 0);
       const dateB = new Date(b.orderDate || b.createdAt || 0);
       return dateA.getTime() - dateB.getTime();
     });
-    
+
     // 현재 주문의 순서 찾기
     const orderNumber = sortedSameDateOrders.findIndex((o: any) => o.orderId === order.orderId) + 1;
-    
+
     return {
       ...order,
       orderNumber
@@ -60,6 +60,51 @@ const OrderListPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 날짜/시간 포맷팅 로직 (중복 제거를 위해 함수로 분리)
+  const formatOrderData = (orderContent: any[]) => {
+    return orderContent.map((order: any) => {
+      const customerName = order.customer?.name || order.customerName || '정보 없음';
+
+      const formatPickupDateTime = (pickupDate: string) => {
+        try {
+          const date = new Date(pickupDate);
+
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+
+          return {
+            date: `${year}-${month}-${day}`,
+            time: `${hours}:${minutes}`
+          };
+        } catch (error) {
+          console.error('날짜 파싱 오류:', error);
+          return { date: '', time: '' };
+        }
+      };
+
+      const pickupDateTime = order.pickupDate ? formatPickupDateTime(order.pickupDate) : { date: '', time: '' };
+
+      return {
+        ...order,
+        pickupDate: pickupDateTime.date,
+        // isAllDay가 true일 때 "하루종일"로 표시
+        pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
+        customerName: customerName,
+        isDelivered: order.isPickedUp,
+        // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
+        items: (order.products || []).map((product: any) => ({
+          riceCakeName: product.productName || '정보 없음',
+          quantity: product.quantity ?? 0,
+          unit: product.unit || '정보 없음',
+          hasRice: order.hasRice,
+        }))
+      };
+    });
+  };
+
   // 주문 상태 변경 후 데이터 새로고침
   const handleOrderStatusChange = async () => {
     try {
@@ -70,50 +115,7 @@ const OrderListPage = () => {
       const data = await response.json();
       const orderContent = data.content;
 
-      const formattedOrders = orderContent.map((order: any) => {
-        // 'customer' 필드가 존재하지 않거나, 'customer.name'이 없는 경우를 처리
-        const customerName = order.customer?.name || order.customerName || '정보 없음';
-
-        // 서버 시간에 +9시간 추가 (로컬 테스트용)
-        const formatPickupDateTime = (pickupDate: string) => {
-          try {
-            const date = new Date(pickupDate);
-            // +9시간 추가
-            const adjustedTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
-            
-            const year = adjustedTime.getFullYear();
-            const month = String(adjustedTime.getMonth() + 1).padStart(2, '0');
-            const day = String(adjustedTime.getDate()).padStart(2, '0');
-            const hours = String(adjustedTime.getHours()).padStart(2, '0');
-            const minutes = String(adjustedTime.getMinutes()).padStart(2, '0');
-            
-            return {
-              date: `${year}-${month}-${day}`,
-              time: `${hours}:${minutes}`
-            };
-          } catch (error) {
-            console.error('날짜 파싱 오류:', error);
-            return { date: '', time: '' };
-          }
-        };
-
-        const pickupDateTime = order.pickupDate ? formatPickupDateTime(order.pickupDate) : { date: '', time: '' };
-
-        return {
-          ...order,
-          pickupDate: pickupDateTime.date,
-          pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
-          customerName: customerName,
-          isDelivered: order.isPickedUp,
-          // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
-          items: (order.products || []).map((product: any) => ({
-            riceCakeName: product.productName || '정보 없음',
-            quantity: product.quantity ?? 0,
-            unit: product.unit || '정보 없음',
-            hasRice: order.hasRice,
-          }))
-        };
-      });
+      const formattedOrders = formatOrderData(orderContent);
 
       // 주문 번호 계산하여 추가
       const ordersWithNumbers = calculateOrderNumbers(formattedOrders);
@@ -134,50 +136,7 @@ const OrderListPage = () => {
         const data = await response.json();
         const orderContent = data.content;
 
-        const formattedOrders = orderContent.map((order: any) => {
-          // 'customer' 필드가 존재하지 않거나, 'customer.name'이 없는 경우를 처리
-          const customerName = order.customer?.name || order.customerName || '정보 없음';
-
-          // 서버 시간에 +9시간 추가 (로컬 테스트용)
-          const formatPickupDateTime = (pickupDate: string) => {
-            try {
-              const date = new Date(pickupDate);
-              // +9시간 추가
-              const adjustedTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
-              
-              const year = adjustedTime.getFullYear();
-              const month = String(adjustedTime.getMonth() + 1).padStart(2, '0');
-              const day = String(adjustedTime.getDate()).padStart(2, '0');
-              const hours = String(adjustedTime.getHours()).padStart(2, '0');
-              const minutes = String(adjustedTime.getMinutes()).padStart(2, '0');
-              
-              return {
-                date: `${year}-${month}-${day}`,
-                time: `${hours}:${minutes}`
-              };
-            } catch (error) {
-              console.error('날짜 파싱 오류:', error);
-              return { date: '', time: '' };
-            }
-          };
-
-          const pickupDateTime = order.pickupDate ? formatPickupDateTime(order.pickupDate) : { date: '', time: '' };
-
-          return {
-            ...order,
-            pickupDate: pickupDateTime.date,
-            pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
-            customerName: customerName,
-            isDelivered: order.isPickedUp,
-            // 백엔드 응답 형식에 맞춰 order.products를 사용하도록 수정
-            items: (order.products || []).map((product: any) => ({
-              riceCakeName: product.productName || '정보 없음',
-              quantity: product.quantity ?? 0,
-              unit: product.unit || '정보 없음',
-              hasRice: order.hasRice,
-            }))
-          };
-        });
+        const formattedOrders = formatOrderData(orderContent);
 
         // 주문 번호 계산하여 추가
         const ordersWithNumbers = calculateOrderNumbers(formattedOrders);
@@ -206,43 +165,7 @@ const OrderListPage = () => {
           const data = await response.json();
           const orderContent = data.content;
 
-          const formattedOrders = orderContent.map((order: any) => {
-            const customerName = order.customer?.name || order.customerName || '정보 없음';
-            const formatPickupDateTime = (pickupDate: string) => {
-              try {
-                const date = new Date(pickupDate);
-                const adjustedTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
-                const year = adjustedTime.getFullYear();
-                const month = String(adjustedTime.getMonth() + 1).padStart(2, '0');
-                const day = String(adjustedTime.getDate()).padStart(2, '0');
-                const hours = String(adjustedTime.getHours()).padStart(2, '0');
-                const minutes = String(adjustedTime.getMinutes()).padStart(2, '0');
-                return {
-                  date: `${year}-${month}-${day}`,
-                  time: `${hours}:${minutes}`
-                };
-              } catch (error) {
-                console.error('날짜 파싱 오류:', error);
-                return { date: '', time: '' };
-              }
-            };
-
-            const pickupDateTime = order.pickupDate ? formatPickupDateTime(order.pickupDate) : { date: '', time: '' };
-
-            return {
-              ...order,
-              pickupDate: pickupDateTime.date,
-              pickupTime: (order.isAllDay === true) ? '하루종일' : pickupDateTime.time,
-              customerName: customerName,
-              isDelivered: order.isPickedUp,
-              items: (order.products || []).map((product: any) => ({
-                riceCakeName: product.productName || '정보 없음',
-                quantity: product.quantity ?? 0,
-                unit: product.unit || '정보 없음',
-                hasRice: order.hasRice,
-              }))
-            };
-          });
+          const formattedOrders = formatOrderData(orderContent);
 
           const ordersWithNumbers = calculateOrderNumbers(formattedOrders);
           setOrders(ordersWithNumbers);
@@ -256,7 +179,7 @@ const OrderListPage = () => {
     };
 
     window.addEventListener('orderUpdated', handleOrderUpdate);
-    
+
     return () => {
       window.removeEventListener('orderUpdated', handleOrderUpdate);
     };
@@ -330,7 +253,7 @@ const OrderListPage = () => {
           if (a.pickupTime === '하루종일' && b.pickupTime !== '하루종일') return -1;
           if (a.pickupTime !== '하루종일' && b.pickupTime === '하루종일') return 1;
           if (a.pickupTime === '하루종일' && b.pickupTime === '하루종일') return 0;
-          
+
           // 일반 주문은 시간순으로 정렬
           return (a.pickupTime || '').localeCompare(b.pickupTime || '');
         });
@@ -413,11 +336,11 @@ const OrderListPage = () => {
             {sortedAndFilteredOrders.length > 0 ? (
                 sortedAndFilteredOrders.map(order => (
                     <Link key={order.orderId} to={`/orders/${order.orderId}`} state={{ customerData: { id: order.customerId, name: order.customerName } }}>
-                      <OrderCard 
-                        order={order} 
-                        onStatusChange={handleOrderStatusChange}
-                        searchQuery={searchQuery}
-                        searchReasons={order.searchReasons}
+                      <OrderCard
+                          order={order}
+                          onStatusChange={handleOrderStatusChange}
+                          searchQuery={searchQuery}
+                          searchReasons={order.searchReasons}
                       />
                     </Link>
                 ))

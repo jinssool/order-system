@@ -112,21 +112,19 @@ const OrderDetailPage = () => {
   const formatPickupDate = (pickupDate: string) => {
     try {
       const date = new Date(pickupDate);
-      // +9시간 추가 (로컬 테스트용 - 주문 리스트와 일관성 유지)
-      const adjustedTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
-      
-      const year = adjustedTime.getFullYear();
-      const month = String(adjustedTime.getMonth() + 1).padStart(2, '0');
-      const day = String(adjustedTime.getDate()).padStart(2, '0');
-      
+      // 서버에서 전달받은 시간을 그대로 사용 (UTC 시간 가정 시)
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
       // isAllDay가 true인 경우 "하루종일"로 표시
       if (order.isAllDay) {
         return `${year}년 ${month}월 ${day}일 하루종일`;
       }
-      
-      const hours = String(adjustedTime.getHours()).padStart(2, '0');
-      const minutes = String(adjustedTime.getMinutes()).padStart(2, '0');
-      
+
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+
       return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
     } catch (error) {
       return pickupDate; // 파싱 실패 시 원본 반환
@@ -166,17 +164,17 @@ const OrderDetailPage = () => {
               </p>
               <p><strong>떡 종류:</strong></p>
               <div className="order-items-list">
-                {order.orderTables && order.orderTables.length > 0 
-                  ? order.orderTables.map((item: any, index: number) => (
-                      <div key={`${item.id || item.productId || index}-${item.productName || item.riceCakeName}`} className="order-item-detail">
-                        <span className="item-name">{item.productName || item.riceCakeName || '정보 없음'}</span>
-                        <span className="item-quantity">{item.quantity}{item.productUnit || item.unit}</span>
-                        <span className={`rice-status ${item.hasRice ? 'has-rice' : 'no-rice'}`}>
+                {order.orderTables && order.orderTables.length > 0
+                    ? order.orderTables.map((item: any, index: number) => (
+                        <div key={`${item.id || item.productId || index}-${item.productName || item.riceCakeName}`} className="order-item-detail">
+                          <span className="item-name">{item.productName || item.riceCakeName || '정보 없음'}</span>
+                          <span className="item-quantity">{item.quantity}{item.productUnit || item.unit}</span>
+                          <span className={`rice-status ${item.hasRice ? 'has-rice' : 'no-rice'}`}>
                           {item.hasRice ? '쌀지참' : '쌀없음'}
                         </span>
-                      </div>
+                        </div>
                     ))
-                  : <p>정보 없음</p>
+                    : <p>정보 없음</p>
                 }
               </div>
               <p><strong>총액:</strong> {order.totalPrice?.toLocaleString() || '0'}원</p>

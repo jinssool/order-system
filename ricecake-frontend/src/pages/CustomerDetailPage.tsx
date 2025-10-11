@@ -12,6 +12,34 @@ const CustomerDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // [NEW] 픽업 시간 포맷팅 유틸리티 함수 (OrderDetailPage.tsx의 로직을 재사용)
+  const formatPickupDate = (order: any) => {
+    const pickupDate = order.pickupDate;
+    if (!pickupDate) return '정보 없음';
+
+    try {
+      const date = new Date(pickupDate);
+      // +9시간 추가 (로컬 테스트용 - 주문 리스트와 일관성 유지)
+      const adjustedTime = new Date(date.getTime() + (9 * 60 * 60 * 1000));
+
+      const year = adjustedTime.getFullYear();
+      const month = String(adjustedTime.getMonth() + 1).padStart(2, '0');
+      const day = String(adjustedTime.getDate()).padStart(2, '0');
+
+      // isAllDay가 true인 경우 "하루종일"로 표시
+      if (order.isAllDay) {
+        return `${year}년 ${month}월 ${day}일 하루종일`;
+      }
+
+      const hours = String(adjustedTime.getHours()).padStart(2, '0');
+      const minutes = String(adjustedTime.getMinutes()).padStart(2, '0');
+
+      return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+    } catch (error) {
+      return pickupDate; // 파싱 실패 시 원본 반환
+    }
+  };
+
   // API 호출로 고객 정보와 주문 내역을 가져옵니다.
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -47,15 +75,16 @@ const CustomerDetailPage = () => {
         const ordersData = await ordersRes.json();
 
         // Orders API 응답 처리 로직
-        // 응답 데이터에 content 속성이 있거나, 직접 배열인 경우를 모두 처리합니다.
         const ordersContent = ordersData.content || ordersData;
 
-        // **주문 내역이 비어있는 경우를 정확히 처리하는 로직 추가**
-        if (Array.isArray(ordersContent) && ordersContent.length === 0) {
-          setCustomerOrders([]); // 빈 배열로 상태 설정
-        } else if (Array.isArray(ordersContent)) {
-          // 데이터가 배열이고 비어있지 않은 경우
-          setCustomerOrders(ordersContent);
+        if (Array.isArray(ordersContent)) {
+          // [MODIFIED] 주문 내역에 픽업 날짜 포맷팅을 적용
+          const formattedOrders = ordersContent.map((order: any) => ({
+            ...order,
+            // MiniOrderCard에서 사용할 포맷된 날짜 필드를 추가합니다.
+            formattedPickupDate: formatPickupDate(order)
+          }));
+          setCustomerOrders(formattedOrders);
         } else {
           // 데이터가 배열이 아닌 경우 (잘못된 응답)
           throw new Error('서버 응답 형식이 올바르지 않습니다.');
@@ -77,7 +106,7 @@ const CustomerDetailPage = () => {
     const handleOrderUpdate = () => {
       console.log('고객 상세 페이지: 주문 업데이트 이벤트 수신, 데이터 새로고침 중...');
       if (!customerId) return;
-      
+
       const fetchCustomerData = async () => {
         setIsLoading(true);
         setError(null);
@@ -109,10 +138,13 @@ const CustomerDetailPage = () => {
           const ordersData = await ordersRes.json();
           const ordersContent = ordersData.content || ordersData;
 
-          if (Array.isArray(ordersContent) && ordersContent.length === 0) {
-            setCustomerOrders([]);
-          } else if (Array.isArray(ordersContent)) {
-            setCustomerOrders(ordersContent);
+          if (Array.isArray(ordersContent)) {
+            // [MODIFIED] 주문 내역에 픽업 날짜 포맷팅을 적용
+            const formattedOrders = ordersContent.map((order: any) => ({
+              ...order,
+              formattedPickupDate: formatPickupDate(order)
+            }));
+            setCustomerOrders(formattedOrders);
           } else {
             throw new Error('서버 응답 형식이 올바르지 않습니다.');
           }
@@ -128,7 +160,7 @@ const CustomerDetailPage = () => {
     };
 
     window.addEventListener('orderUpdated', handleOrderUpdate);
-    
+
     return () => {
       window.removeEventListener('orderUpdated', handleOrderUpdate);
     };
@@ -137,13 +169,13 @@ const CustomerDetailPage = () => {
   // 주문 상태 변경 후 데이터 새로고침
   const handleOrderStatusChange = async () => {
     if (!customerId) return;
-    
+
     try {
       const params = new URLSearchParams();
       params.append('page', '0');
       params.append('size', '50');
       params.append('sort', 'orderDate');
-      
+
       const url = `https://happy-tteok-129649050985.asia-northeast3.run.app/api-v1/orders/by-customer/${customerId}?${params.toString()}`;
       const ordersRes = await fetch(url, {
         method: 'GET',
@@ -153,15 +185,22 @@ const CustomerDetailPage = () => {
       if (ordersRes.ok) {
         const ordersData = await ordersRes.json();
         const ordersContent = ordersData.content || ordersData;
-        
+
         if (Array.isArray(ordersContent)) {
-          setCustomerOrders(ordersContent);
+          // [MODIFIED] 주문 내역에 픽업 날짜 포맷팅을 적용
+          const formattedOrders = ordersContent.map((order: any) => ({
+            ...order,
+            formattedPickupDate: formatPickupDate(order)
+          }));
+          setCustomerOrders(formattedOrders);
         }
       }
     } catch (e: any) {
       console.error("주문 상태 새로고침 실패:", e);
     }
   };
+
+  // ... (handleDelete 함수는 변경 없음) ...
   const handleDelete = async () => {
     if (!customer || !customerId) return;
     if (window.confirm(`'${customer.name}' 고객 정보를 정말 삭제하시겠습니까?`)) {
@@ -221,7 +260,7 @@ const CustomerDetailPage = () => {
             <div className="related-list">
               {customerOrders.length > 0 ? (
                   customerOrders
-                      .sort((a, b) => b.pickupDate.localeCompare(a.pickupDate)) // 클라이언트에서 정렬
+                      .sort((a, b) => b.pickupDate.localeCompare(a.pickupDate)) // 정렬은 ISO 형식의 pickupDate로 유지
                       .map(order => (
                           <Link
                               to={`/orders/${order.orderId}`}
