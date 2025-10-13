@@ -15,7 +15,6 @@ const OrderDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const customerFromState = location.state?.customerData;
-  console.log(customerFromState);
   const handleBackToList = () => {
     navigate('/');
   };
@@ -152,7 +151,7 @@ const OrderDetailPage = () => {
               <p>
                 <strong>고객명:</strong>
                 {customerInfo.name ? (
-                    <Link to={`/customers/${customerInfo.id}`} style={{textDecoration: 'underline', marginLeft: '5px'}}>
+                    <Link to={`/customers/${order.customerId}`} style={{textDecoration: 'underline', marginLeft: '5px'}}>
                       {customerInfo.name}
                     </Link>
                 ) : (
